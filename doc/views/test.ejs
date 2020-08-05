@@ -1,0 +1,19 @@
+<%- include header %>
+    <script type="text/javascript">
+
+        function test() {
+          var res = web3.padRight(web3.fromAscii('ethereum'),66);
+          console.log('fromAscii', res);
+          res = '0x657468657265756d000000000000000000000000000000000000000000000000';
+          console.log('hardcode:', res);
+          res = web3.toAscii(res);
+          console.log('toAscii', res);
+        }
+
+    </script>
+
+<h1>Test</h1>
+<button type="button" onClick="test();">test</button>
+<div></div>
+<%- include footer %>
+

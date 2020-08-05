@@ -1,7 +1,7 @@
 pragma solidity ^0.4.24;
 
 library ExtString {
-    function strConcat(string _a, string _b) internal pure returns (string){
+    function strConcat(string _a, string _b) internal returns (string){
         bytes memory _ba = bytes(_a);
         bytes memory _bb = bytes(_b);
         string memory ret = new string(_ba.length + _bb.length);
@@ -12,7 +12,8 @@ library ExtString {
         return string(ret);
     }
 
-    function uintToString(uint256 v) internal pure returns (string str) {
+
+    function uintToString(uint256 v) constant returns (string str) {
         uint256 maxLength = 100;
         bytes memory reversed = new bytes(maxLength);
         uint i = 0;

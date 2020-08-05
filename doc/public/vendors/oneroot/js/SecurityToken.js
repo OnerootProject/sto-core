@@ -1,51 +1,130 @@
 var SecurityToken = function (web3, param) {
-    var factory = new Web3Helper(web3, param);
-
-    factory.symbol = function () {
-        return factory.callTx('symbol', factory.instance.symbol.getData());
+    var factory = {
+        web3 : web3,
+        nonce: param['nonce'],
+        gasPrice: param['gasPrice']? web3.toWei(param['gasPrice']+'', "gwei") : web3.toWei("10", "gwei"),
+        gasLimit: 500000,
+        addr: param['address'],
+        instance: web3.eth.contract(param['abi']).at(param['address']),
+        sender: param['sender']
     };
 
-    factory.name = function () {
-        return factory.callTx('name', factory.instance.name.getData());
+    factory.debug = function() {
+        console.log('instance:', factory.instance);
     };
 
-    factory.totalSupply = function () {
-        return factory.callTx('totalSupply', factory.instance.totalSupply.getData());
+    factory.contract = function(address, abi) {
+        factory.instance = web3.eth.contract(abi).at(address);
     };
 
-    factory.granularity = function () {
-        return factory.callTx('granularity', factory.instance.granularity.getData());
+    /**
+     * web3.eth.sendTransaction, with default values, overwritted by passed params
+     **/
+    factory.sendTx = function (_txParams=null) {
+        let txParams = {
+            nonce: web3.toHex(factory.nonce),
+            gas: web3.toHex(factory.gasLimit),
+            gasPrice: web3.toHex(factory.gasPrice),
+            to: factory.addr,
+            from: factory.sender,
+            // 调用合约转账value这里留空
+            value: '0x00',
+            data: null
+        };
+
+        if(_txParams) {
+            Object.assign(txParams, _txParams);
+        }
+
+        // let serializedTx = web3.toHex(txParams);
+        console.log('txParams:',txParams);
+        return new Promise((resolve, reject) => {
+            web3.eth.sendTransaction(txParams, (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+
+            });
+        });
     };
 
-    factory.decimals = function () {
-        return factory.callTx('decimals', factory.instance.decimals.getData());
+    /**
+     * web3.eth.call, with default values, overwritted by passed params
+     **/
+    factory.callTx = function (_txParams=null) {
+        let txParams = {
+            to: factory.addr,
+            from: factory.sender,
+            data: null
+        };
+        if(_txParams) {
+            Object.assign(txParams, _txParams);
+        }
+
+        return new Promise((resolve, reject) => {
+            web3.eth.call(txParams, (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+
+            });
+        });
     };
 
-    factory.owner = function () {
-        return factory.callTx('owner', factory.instance.owner.getData());
+    factory.setNonce = function (nonce) {
+        factory.nonce = nonce;
     };
 
-    factory.getTrancheTotalSupply = function (tranche) {
-        return factory.callTx('getTrancheTotalSupply', factory.instance.getTrancheTotalSupply.getData(tranche));
+    factory.setSender = function (address) {
+        factory.sender = address;
+    };
+
+    factory.startTrans = function (address) {
+        return new Promise((resolve, reject) => {
+            web3.eth.getTransactionCount(address, (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    factory.sender = address;
+                    factory.nonce = result;
+                    resolve(result);
+                }
+            });
+        });
     };
 
     factory.balanceOf = function (owner) {
-        return factory.callTx('balanceOf', factory.instance.balanceOf.getData(owner));
+        let txData = {
+            data: factory.instance.balanceOf.getData(owner)
+        };
+
+        return factory.callTx(txData);
     };
 
     factory.balanceOfTranche = function (tranche, owner) {
-        return factory.callTx('balanceOfTranche', factory.instance.balanceOfTranche.getData(tranche, owner));
+        // tranche = web3.padRight(web3.fromAscii(tranche),66);
+        let txData = {
+            data: factory.instance.balanceOfTranche.getData(tranche, owner)
+        };
+
+        return factory.callTx(txData);
     };
 
-    factory.getPolicy = function (tranche='') {
-        return factory.callTx('getPolicy', factory.instance.getPolicy.getData(tranche));
-    };
 
-    factory.checkRole = function (owner, action) {
-        return factory.callTx('checkRole', factory.instance.checkRole.getData(owner, action));
+    factory.getPolicy = function (tranche) {
+        let txData = {
+            data: factory.instance.getPolicy.getData(tranche)
+        };
+
+        return factory.callTx(txData);
     };
 
     factory.registryPolicy = function (tranche, policy) {
+        console.log('tranche:', tranche);
         factory.gasLimit = 49284*2;
         let txData = {
             data: factory.instance.registryPolicy.getData(tranche, policy)
@@ -54,7 +133,7 @@ var SecurityToken = function (web3, param) {
     };
 
     factory.mint = function (investor, amount) {
-        factory.gasLimit = 60000*4;
+        factory.gasLimit = 100000*2;
         let txData = {
             data: factory.instance.mint.getData(investor, amount)
         };
@@ -62,7 +141,7 @@ var SecurityToken = function (web3, param) {
     };
 
     factory.batchMint = function (investors, amounts) {
-        factory.gasLimit = 60000*4 * investors.length;
+        factory.gasLimit = 100000*2 * investors.length;
         let txData = {
             data: factory.instance.batchMint.getData(investors, amounts)
         };
@@ -70,7 +149,7 @@ var SecurityToken = function (web3, param) {
     };
 
     factory.mintTranche = function (tranche, investor, amount) {
-        factory.gasLimit = 60000*4;
+        factory.gasLimit = 100000*2;
         let txData = {
             data: factory.instance.mintTranche.getData(tranche, investor, amount, '')
         };
@@ -78,34 +157,25 @@ var SecurityToken = function (web3, param) {
     };
 
     factory.batchMintTranche = function (tranche, investors, amounts) {
-        factory.gasLimit = 60000*4 * investors.length;
+        factory.gasLimit = 100000*2 * investors.length;
         let txData = {
             data: factory.instance.batchMintTranche.getData(tranche, investors, amounts, '')
         };
         return factory.sendTx(txData);
     };
 
+    factory.authorizeOperator = function (operator) {
+        factory.gasLimit = 37408*2;
+        let txData = {
+            data: factory.instance.authorizeOperator.getData(operator)
+        };
+        return factory.sendTx(txData);
+    };
 
     factory.approve = function (operator, value=1) {
         factory.gasLimit = 55183*2;
         let txData = {
             data: factory.instance.approve.getData(operator, value)
-        };
-        return factory.sendTx(txData);
-    };
-
-    factory.addRole = function (owner, action) {
-        factory.gasLimit = 58611*2;
-        let txData = {
-            data: factory.instance.addRole.getData(owner, action)
-        };
-        return factory.sendTx(txData);
-    };
-
-    factory.removeRole = function (owner, action) {
-        factory.gasLimit = 58611*2;
-        let txData = {
-            data: factory.instance.removeRole.getData(owner, action)
         };
         return factory.sendTx(txData);
     };

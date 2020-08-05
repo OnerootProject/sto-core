@@ -1,0 +1,57 @@
+<%- include header %>
+
+<div class="app-body">
+  <%- include menu %>
+  <main class="main">
+    <!-- Breadcrumb-->
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">基本</li>
+      <li class="breadcrumb-item active">账户钱包地址</li>
+    </ol>
+
+    <div class="container-fluid">
+      <div class="animated fadeIn">
+        <div class="card">
+          <div class="card-header">getAccount()</div>
+          <div class="card-body">
+            <div class="bd-example">
+              获取MetaMask选择的钱包地址
+          </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <%- include code %>
+
+  </main>
+</div>
+<script type="text/javascript">
+
+  function runCode() {
+    watchAccount();
+  }
+
+  function watchAccount() {
+    var res = getWeb3Account();
+    var result = "账号：" + res.data +"\n";
+    if(res.code!=0) {
+      result += res.msg+ '\n'
+    }
+
+    setResult(result);
+
+  }
+
+  // var Web3 = require('web3');
+  $(document).ready(function() {
+    var code = getWeb3Account.toString()+"\n\n";
+    code += watchAccount.toString() + "\n";
+    setCode(code);
+
+    watchAccount();
+
+  });
+
+</script>
+<%- include footer %>

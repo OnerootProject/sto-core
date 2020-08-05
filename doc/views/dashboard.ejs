@@ -1,0 +1,128 @@
+<%- include header %>
+
+<div class="app-body">
+  <%- include menu %>
+  <main class="main">
+    <!-- Breadcrumb-->
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">Home</li>
+      <li class="breadcrumb-item">
+        <a href="#">Admin</a>
+      </li>
+      <li class="breadcrumb-item active">Dashboard</li>
+
+    </ol>
+    <div class="container-fluid">
+      <div class="animated fadeIn">
+
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-sm-8">
+                <h4 class="card-title mb-0">Oneroot Zeus</h4>
+                <div class="small text-muted">Security Token Documents</div>
+              </div>
+              <!-- /.col-->
+              <div class="col-sm-4 d-none d-md-block">
+
+              </div>
+              <!-- /.col-->
+            </div>
+            <!-- /.row-->
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="form-group row">
+                  <label class="col-md-3 col-form-label" for="text-input">Text Input</label>
+                  <div class="col-md-9">
+                    <select class="form-control" id="contractName" name="contractName">
+                      <option value="0">Please select合约</option>
+                      <option value="SecurityToken">SecurityToken</option>
+                      <option value="GeneralPolicy">GeneralPolicy</option>
+                      <option value="DefaultSTO">DefaultSTO</option>
+                      <option value="DefaultSTOFactory">DefaultSTOFactory</option>
+                      <option value="STGFactory">STGFactory</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label class="col-md-3 col-form-label" for="text-input">Text Input</label>
+                  <div class="col-md-9">
+                    <input class="form-control" id="tx" type="text" name="text-input" placeholder="请输入tx">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.row-->
+          </div>
+          <div class="card-footer">
+            <button class="btn btn-block btn-primary" type="button" onclick="runCode()">运行</button>
+          </div>
+        </div>
+        <!-- /.card-->
+
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="animated fadeIn">
+
+        <div class="card">
+          <div class="card-body">
+            <!-- /.row-->
+            <div class="row">
+              <div class="col-sm-6">
+                <div class="bd-example" style="height:300px;">
+                  <textarea id="result1" class="myresult"></textarea>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="bd-example" style="height:300px;">
+                  <textarea id="result2" class="myresult"></textarea>
+                </div>
+              </div>
+            </div>
+            <!-- /.row-->
+          </div>
+
+        </div>
+        <!-- /.card-->
+
+      </div>
+    </div>
+  </main>
+</div>
+<script type="text/javascript">
+  function setCode(_code) {
+    $('#code').val(_code);
+  }
+
+  function setResult1(_result) {
+    $('#result1').val(_result);
+  }
+
+  function setResult2(_result) {
+    $('#result2').val(_result);
+  }
+
+  function getTransactionReceiptLogs() {
+    var name= $('#contractName').val();
+    var tx = $('#tx').val();
+    $.get("/api/getTransactionReceiptLogs?name="+name+"&tx="+tx,function(res){
+      if(res.code==0) {
+        setResult1(JSON.stringify(res.data, ' ', 4));
+      } else {
+        setResult1(res.msg);
+      }
+
+    });
+  }
+
+  function runCode() {
+    getTransactionReceiptLogs();
+    getTransaction($('#tx').val()).then(res=>{
+      setResult2(JSON.stringify(res, ' ', 4));
+    })
+
+  }
+</script>
+<%- include footer %>

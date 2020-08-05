@@ -11,33 +11,10 @@ router.post('/verifySign', async (ctx, next) => {
     ctx.body = data;
 })
 
-router.post('/verifyPersonalSign', async (ctx, next) => {
-    let account = ctx.request.body.account;
-    let msg = ctx.request.body.msg;
-    let signature = ctx.request.body.signature;
-    let data = ApiService.verifyPersonalSign(account, msg, signature);
-    ctx.body = data;
-})
-
-router.post('/verifySignTypedData', async (ctx, next) => {
-    let account = ctx.request.body.account;
-    let msg = ctx.request.body.msg;
-    let signature = ctx.request.body.signature;
-    let data = ApiService.verifySignTypedData(account, msg, signature);
-    ctx.body = data;
-})
-
 router.get('/getTransactionReceiptLogs', async (ctx, next) => {
     let name = ctx.request.query.name;
     let tx = ctx.request.query.tx;
-    let data = await ApiService.getTransactionReceiptLogs(name, tx);
-    ctx.body = data;
-})
-
-router.get('/getTransaction', async (ctx, next) => {
-    let name = ctx.request.query.name;
-    let tx = ctx.request.query.tx;
-    let data = ApiService.getTransaction(name, tx);
+    let data = ApiService.getTransactionReceiptLogs(name, tx);
     ctx.body = data;
 })
 

@@ -1,0 +1,68 @@
+<%- include header %>
+
+<div class="app-body">
+  <%- include menu %>
+  <main class="main">
+    <!-- Breadcrumb-->
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">ST合约</li>
+      <li class="breadcrumb-item active">账户ST余额</li>
+    </ol>
+
+    <div class="container-fluid">
+      <div class="animated fadeIn">
+        <div class="card">
+          <div class="card-header">balanceOf(securityToken)</div>
+          <div class="card-body">
+            <div class="bd-example">
+              获取账户ST余额
+          </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+    <%- include code %>
+
+  </main>
+</div>
+<script type="text/javascript">
+
+  function runCode() {
+    balanceOf(config.contract.ST).then();
+  }
+
+  async function balanceOf(securityToken) {
+    var res = getWeb3Account();
+    var account = res.data;
+    var result = "账号：" + account +"\n";
+    if(res.code!=0) {
+      result += res.msg+ '\n';
+      setResult(result);
+      return;
+    }
+
+    try {
+      var param = {address: securityToken, abi: abiSecurityToken, sender: account};
+      var st = new SecurityToken(web3, param);
+      res  = await st.balanceOf(account);
+      result += "balance：" + web3.fromWei(res, 'ether') + "\n";
+    } catch (e) {
+      result += "error：" + e + "\n";
+    }
+
+    setResult(result);
+
+  }
+
+  // var Web3 = require('web3');
+  $(document).ready(function() {
+    var code = runCode.toString() + "\n\n";
+    code += getWeb3Account.toString()+"\n";
+    code += balanceOf.toString() + "\n";
+    setCode(code);
+
+  });
+
+</script>
+<%- include footer %>

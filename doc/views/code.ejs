@@ -1,0 +1,46 @@
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-6" >
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-8">代码</div>
+                        <div class="col-sm-4"><button class="btn btn-block btn-primary" type="button" onclick="runCode()">运行</button></div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="bd-example" style="height:300px;">
+                        <textarea id="code" class="mycode"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6" >
+            <div class="card">
+                <div class="card-header">
+                    <div class="row">
+                        <div class="col-sm-8">执行结果</div>
+                        <div class="col-sm-4"><button class="btn btn-block btn-primary" type="button" onclick="setResult('')">清除</button></div>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="bd-example" style="height:300px;">
+                        <textarea id="result" class="myresult"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    function setCode(_code) {
+        $('#code').val(_code);
+    }
+
+    function setResult(_result) {
+        $('#result').val(_result);
+    }
+
+</script>
