@@ -3,7 +3,7 @@ var STGFactory = function (web3, param) {
         web3 : web3,
         nonce: param['nonce'],
         gasPrice: param['gasPrice']? web3.toWei(param['gasPrice']+'', "gwei") : web3.toWei("10", "gwei"),
-        gasLimit: 3890858,
+        gasLimit: 4890858,
         addr: param['address'],
         instance: web3.eth.contract(param['abi']).at(param['address']),
         sender: param['sender']
@@ -99,9 +99,9 @@ var STGFactory = function (web3, param) {
     };
 
 
-    factory.create = function (name, symbol, decimals, granularity) {
+    factory.create = function (issuer, name, symbol, decimals, granularity) {
         let txData = {
-            data: factory.instance.create.getData(name, symbol, decimals, granularity)
+            data: factory.instance.create.getData(issuer, name, symbol, decimals, granularity)
         };
         return factory.sendTx(txData);
     };

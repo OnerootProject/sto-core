@@ -18,21 +18,21 @@ module.exports = {
             host: 'localhost',
             port: 8545,
             network_id: '*',
-            gas: 6000000,
+            gas: 6600000,
             gasPrice: 10000000000,
         },
         main: {
             provider: function() {
                 return new HDWalletProvider(privkey, "https://mainnet.infura.io/v3/"+infura_apikey)
             },
-            gas: 6000000,
+            gas: 6600000,
             network_id: 1
         },
         ropsten: {
             provider: function() {
                 return new HDWalletProvider(privkey, "https://ropsten.infura.io/v3/"+infura_apikey)
             },
-            gas: 6000000,
+            gas: 6600000,
             network_id: 3
         },
         rinkeby: {

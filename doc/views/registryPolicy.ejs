@@ -47,7 +47,7 @@
       result += "nonce：" + nonce + "\n";
       var param = {address: config.contract.ST, abi: abiSecurityToken, sender: account, nonce: nonce};
       var st = new SecurityToken(web3, param);
-      res  = await st.registryPolicy(policy);
+      res  = await st.registryPolicy('',policy);
       result += "tx：" + res + "\n";
     } catch (e) {
       result += "error：" + e + "\n";

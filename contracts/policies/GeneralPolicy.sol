@@ -1,18 +1,20 @@
 pragma solidity ^0.4.24;
 
 import "../interfaces/IPolicy.sol";
+import "../interfaces/ICheckRAC.sol";
 import "../interfaces/ISecurityToken.sol";
 import "../libraries/SafeMath.sol";
 import "../modules/Pausable.sol";
 import "../modules/Versionable.sol";
-import "../modules/RAC.sol";
+import "../modules/DataType.sol";
 
-contract GeneralPolicy {
+contract GeneralPolicy is DataType {
     using SafeMath for uint256;
 
     uint8 public version = 1;
     string public name = "SecurityTokenPolicy";
     address public securityToken;
+    address public racRegistry;
 
     //from and to timestamps that an investor can transfer tokens respectively
     struct Restriction {
@@ -41,8 +43,7 @@ contract GeneralPolicy {
         uint256 _toTime,
         uint256 _expiryTime,
         bool _canTransfer,
-        address _addedBy,
-        uint256 _timestamp
+        address _addedBy
     );
 
     event ConfigHolder(bytes32 _tranche, uint256 _oldHolderCount, uint256 _newHolderCount, uint256 _oldHolderPercentage, uint256 _newHolderPercentage);
@@ -52,6 +53,19 @@ contract GeneralPolicy {
     constructor (address _securityToken) public
     {
         securityToken = _securityToken;
+        racRegistry = ISecurityToken(securityToken).racRegistry();
+    }
+
+    /**
+    * @dev modifier to scope access to a single role (uses msg.sender as addr)
+    * @param _action the name of the role
+    * // reverts
+    */
+    modifier onlyRole(string _action)
+    {
+        require(racRegistry != address(0), "RAC does not Register");
+        require(ICheckRAC(racRegistry).check(msg.sender, stringToBytes32(_action)), "Permission deny");
+        _;
     }
 
     function checkTransfer(bytes32 _tranche, address _from, address _to, uint256 _amount, bytes _data) public returns(bool) {
@@ -62,7 +76,11 @@ contract GeneralPolicy {
     }
 
     function checkMint(bytes32 _tranche, address _to, uint256 _amount, bytes _data) public returns(bool) {
-        require(whitelist[_to][_tranche].expiryTime >= now);
+        require(whitelist[_to][_tranche].expiryTime >= now, "account expired");
+        return true;
+    }
+
+    function checkBurn(bytes32 _tranche, address _to, uint256 _amount, bytes _data) public returns(bool) {
         return true;
     }
 
@@ -79,19 +97,18 @@ contract GeneralPolicy {
     * @param _canTransfer is used to know whether the investor is restricted investor or not.
     */
     function modifyWhitelist(
-        bytes32 _tranche,
         address _investor,
         uint256 _fromTime,
         uint256 _toTime,
         uint256 _expiryTime,
-        bool _canTransfer
+        bool _canTransfer,
+        bytes32 _tranche
     )
-    public
-    {
+    public onlyRole('modifyWhitelist') {
         //Passing a _time == 0 into this function, is equivalent to removing the _investor from the whitelist
         whitelist[_investor][_tranche] = Restriction(_fromTime, _toTime, _expiryTime, _canTransfer);
         /*solium-disable-next-line security/no-block-members*/
-        emit ModifyWhitelist(_tranche, _investor, _fromTime, _toTime, _expiryTime, _canTransfer, msg.sender, now);
+        emit ModifyWhitelist(_tranche, _investor, _fromTime, _toTime, _expiryTime, _canTransfer, msg.sender);
     }
 
 
@@ -104,20 +121,20 @@ contract GeneralPolicy {
     * @param _canTransfer An array of boolean values
     */
     function batchModifyWhitelist(
-        bytes32[] _tranches,
         address[] _investors,
         uint256[] _fromTimes,
         uint256[] _toTimes,
         uint256[] _expiryTimes,
-        bool[] _canTransfer
-    ) public {
+        bool[] _canTransfer,
+        bytes32[] _tranches
+    ) public onlyRole('modifyWhitelist') {
         require(_investors.length == _tranches.length, "Mismatched input lengths");
         require(_investors.length == _fromTimes.length, "Mismatched input lengths");
         require(_fromTimes.length == _toTimes.length, "Mismatched input lengths");
         require(_toTimes.length == _expiryTimes.length, "Mismatched input lengths");
         require(_canTransfer.length == _toTimes.length, "Mismatched input length");
         for (uint256 i = 0; i < _investors.length; i++) {
-            modifyWhitelist(_tranches[i], _investors[i], _fromTimes[i], _toTimes[i], _expiryTimes[i], _canTransfer[i]);
+            modifyWhitelist(_investors[i], _fromTimes[i], _toTimes[i], _expiryTimes[i], _canTransfer[i], _tranches[i]);
         }
     }
 
@@ -153,7 +170,7 @@ contract GeneralPolicy {
     * @param _maxHolderCount is the new maximum amount of token holders
     * @param _maxHolderPercentage is the new maximum percentage (0~100)
     */
-    function configHolder(bytes32 _tranche, uint256 _maxHolderCount, uint256 _maxHolderPercentage) public {
+    function configHolder(bytes32 _tranche, uint256 _maxHolderCount, uint256 _maxHolderPercentage) public onlyRole('configPolicy') {
         emit ConfigHolder(_tranche, maxHolderCount[_tranche], _maxHolderCount, maxHolderPercentage[_tranche], _maxHolderPercentage);
         maxHolderCount[_tranche] = _maxHolderCount;
         maxHolderPercentage[_tranche] = _maxHolderPercentage;

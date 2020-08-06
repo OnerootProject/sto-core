@@ -30,7 +30,7 @@
 
   function runCode() {
     var now = Math.floor(new Date().getTime()/1000);
-    var policy=config.contract.GP, investor='0x866e43291293892bd0980adc4ec5166f33623d86', fromTime=now, toTime=now, expiryTime=now+3600*24*999999999, canTransfer=true;
+    var policy=config.contract.GP, investor='0x866e43291293892bd0980adc4ec5166f33623d86', fromTime=now, toTime=now, expiryTime=now+3600*24*100, canTransfer=true;
     console.log(policy, investor, fromTime, toTime, expiryTime, canTransfer);
     modifyWhiteList(policy, investor, fromTime, toTime, expiryTime, canTransfer).then();
   }

@@ -1,6 +1,7 @@
 var BigNumber = require("bignumber.js");
 var utils = require("web3/lib/utils/utils.js");
 var SolidityEvent = require("web3/lib/web3/event.js");
+var InputDataDecoder = require('./InputDataDecoder');
 var Log = require('./LogConsole');
 
 class Web3Utils{
@@ -19,21 +20,30 @@ class Web3Utils{
                 return (decoder.signature() == log.topics[0].replace("0x",""));
             })
             if (decoder) {
+                console.log('decoder:',decoder['_params']);
+                let types = [];
+                for(let i=0; i<decoder['_params'].length; i++) {
+                    console.log('decoder _params:',decoder['_params'][i]);
+                    types.push(decoder['_params'][i]['type']);
+                }
+
+                log['types'] = types;
                 return decoder.decode(log);
             } else {
+                console.log('un decoder:',log);
                 return log;
             }
         }).map(function (log) {
             let abis = abi.find(function(json) {
                 return (json.type === 'event' && log.event === json.name);
             });
-            if (abis && abis.inputs) {
-                abis.inputs.forEach(function (param, i) {
-                    // if (param.type == 'bytes32') {
-                    //     log.args[param.name] = utils.toAscii(log.args[param.name]);
-                    // }
-                })
-            }
+            // if (abis && abis.inputs) {
+            //     abis.inputs.forEach(function (param, i) {
+            //         if (param.type == 'bytes32') {
+            //             log.args[param.name] = utils.toAscii(log.args[param.name]);
+            //         }
+            //     })
+            // }
             return log;
         });
 
@@ -41,6 +51,12 @@ class Web3Utils{
         return result;
     };
 
+    static decodeInputForContract(abi, data) {
+        let decoder = new InputDataDecoder(abi);
+        let result = decoder.decodeData(data);
+        // console.log(result);
+        return result;
+    }
 
     static setAmount(amount, precision=18) {
         let bn_precision = new BigNumber(10).pow(precision);

@@ -1,7 +1,6 @@
 pragma solidity ^0.4.24;
 
 import "./interfaces/IPolicy.sol";
-import "./modules/RAC.sol";
 
 contract PolicyRegistry {
 
@@ -34,6 +33,10 @@ contract PolicyRegistry {
 
     function checkMint(bytes32 _tranche, address _to, uint256 _amount, bytes _data) public returns(bool) {
         return IPolicy(policies[msg.sender][_tranche]).checkMint(_tranche, _to, _amount, _data);
+    }
+
+    function checkBurn(bytes32 _tranche, address _to, uint256 _amount, bytes _data) public returns(bool) {
+        return IPolicy(policies[msg.sender][_tranche]).checkBurn(_tranche, _to, _amount, _data);
     }
 
     function checkChangeTranche(address _owner, bytes32 _from, bytes32 _to, uint256 _amount, bytes _data) public returns(bool) {

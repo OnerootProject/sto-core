@@ -2,14 +2,16 @@ pragma solidity ^0.4.24;
 
 
 import "./interfaces/IPolicyRegistry.sol";
+import "./interfaces/ICheckRAC.sol";
 import "./libraries/SafeMath.sol";
+import "./modules/DataType.sol";
 
 /**
 * @title Security Token contract
 * @notice  ERC20 and ERC1410 are supported:
 * @notice - Transfers are restricted; need to check policy
 */
-contract SecurityToken {
+contract SecurityToken is DataType {
     using SafeMath for uint256;
 
     // Used to hold the number version data
@@ -21,6 +23,9 @@ contract SecurityToken {
     uint8 public decimals;
     uint256 public granularity;
     address public policyRegistry;
+    address public racRegistry;
+    address public issuer;
+    address owner;
 
     mapping (bytes32 => uint256) trancheTotalSupply;
 
@@ -92,17 +97,17 @@ contract SecurityToken {
     /// @notice This emits on any successful revoke of an operators approval for a single tranche
     event RevokedOperatorTranche(bytes32 indexed _tranche, address indexed _operator, address indexed _owner);
 
+    // Emit when the issuer get changed
+    event ChangeIssuer(address indexed _old, address indexed _new);
     // Emit when the granularity get changed
     event ChangeGranularity(uint256 _old, uint256 _new);
-    // Emit when the defaultTranche get changed
-    event ChangeDefaultTranche(bytes32 _old, bytes32 _new);
+
     // Emit when the defaultTranche get changed
     event ChangeInvestorDefaultTranche(address _owner, bytes32 _old, bytes32 _new);
     // Emit when PolicyRegistry get change from the securityToken
     event ChangePolicyRegistry(address _old, address _new);
     // Emit when Module get removed from the securityToken
     event RegistryPolicy(bytes32 _tranche, address _policy);
-
 
     event ForceTransfer(bytes32 _tranche, address indexed _operator, address indexed _from, address indexed _to, uint256 _value, bool _verifyTransfer, bytes _data);
     event ForceBurn(bytes32 _tranche, address indexed _operator, address indexed _from, uint256 _value, bool _verifyTransfer, bytes _data);
@@ -119,37 +124,89 @@ contract SecurityToken {
         _;
     }
 
+
+    modifier checkPolicyRegistry() {
+        require(policyRegistry != address(0), "PolicyRegistry does not Register");
+        _;
+    }
+
+    modifier checkPolicy(bytes32 _tranche) {
+        require(policies[_tranche] != address(0), "Invalid Policy of the tranche");
+        _;
+    }
+
     /**
      * @notice Constructor
+     * @param _issuer address of issuer
      * @param _name Name of the SecurityToken
      * @param _symbol Symbol of the Token
      * @param _decimals Decimals for the securityToken
      * @param _granularity granular level of the token
-     * @param _policyRegistry Contract address of the policy registry
+     * @param _racRegistry Contract address of the rac registry
      */
     constructor (
+        address _issuer,
         string _name,
         string _symbol,
         uint8 _decimals,
         uint256 _granularity,
-        address _policyRegistry
+        address _racRegistry
     )
     public
     {
+        owner = msg.sender;
+
+        issuer = _issuer;
         name = _name;
         symbol = _symbol;
         decimals = _decimals;
         granularity = _granularity;
-        policyRegistry = _policyRegistry;
-        defaultTranche = '';
+        racRegistry = _racRegistry;
+        defaultTranche = stringToBytes32('');
     }
 
+    /**
+    * @dev modifier to scope access to a single role (uses msg.sender as addr)
+    * @param _action the name of the role
+    * // reverts
+    */
+    modifier onlyRole(string _action)
+    {
+        require(racRegistry != address(0), "RAC does not register");
+        require(ICheckRAC(racRegistry).check(msg.sender, stringToBytes32(_action)), "Permission deny");
+        _;
+    }
+
+    /**
+    * @dev modifier to scope access to a single role (uses msg.sender as addr)
+    * @param _action the name of the role
+    */
+    modifier onlyIssuerOrRole(string _action)
+    {
+        require(racRegistry != address(0), "RAC does not register");
+        if(issuer == msg.sender) {
+            _;
+        } else if (ICheckRAC(racRegistry).check(msg.sender, stringToBytes32(_action))) {
+            _;
+        } else {
+            revert("Permission deny");
+        }
+    }
+
+    /**
+    * @notice change a policy registry attached to the SecurityToken
+    * @param _issuer address of issuer
+    */
+    function changeIssuer(address _issuer) external onlyIssuerOrRole("changeIssuer") {
+        issuer = _issuer;
+        emit ChangeIssuer(issuer, _issuer);
+    }
 
     /**
     * @notice change a policy registry attached to the SecurityToken
     * @param _policy address of policy registry
     */
-    function changePolicyRegistry(address _policy) external {
+    function changePolicyRegistry(address _policy) external onlyRole("registryPolicy") {
         policyRegistry = _policy;
         emit ChangePolicyRegistry(policyRegistry, _policy);
     }
@@ -166,7 +223,7 @@ contract SecurityToken {
     * @notice Removes a policy attached to the SecurityToken
     * @param _policy address of policy
     */
-    function registryPolicy(bytes32 _tranche, address _policy) external {
+    function registryPolicy(bytes32 _tranche, address _policy) external checkPolicyRegistry onlyRole("registryPolicy") {
         require(IPolicyRegistry(policyRegistry).register(_tranche, _policy));
         policies[_tranche] = _policy;
         emit RegistryPolicy(_tranche, _policy);
@@ -176,7 +233,7 @@ contract SecurityToken {
     * @notice Allows owner to change token granularity
     * @param _granularity granularity level of the token
     */
-    function changeGranularity(uint256 _granularity) external {
+    function changeGranularity(uint256 _granularity) external onlyIssuerOrRole("changeGranularity") {
         require(_granularity != 0, "Invalid granularity");
         emit ChangeGranularity(granularity, _granularity);
         granularity = _granularity;
@@ -185,20 +242,10 @@ contract SecurityToken {
     /**
     * @notice Allows owner to change default tranche for erc20
     */
-    function changeDefaultTranche(bytes32 _tranche) external {
-        emit ChangeDefaultTranche(defaultTranche, _tranche);
-        defaultTranche = _tranche;
-    }
-
-
-    /**
-    * @notice Allows owner to change default tranche for erc20
-    */
     function changeInvestorDefaultTranche(address _owner, bytes32 _tranche) external {
         emit ChangeInvestorDefaultTranche(_owner, investorDefaultTranche[_owner], _tranche);
         investorDefaultTranche[_owner] = _tranche;
     }
-
 
     /**
      * @notice Returns the decimals
@@ -354,7 +401,7 @@ contract SecurityToken {
      * @param _data data to indicate validation
      * @return bool success
      */
-    function _operatorSendTranche(bytes32 _tranche, address _from, address _to, uint256 _value, bytes _data) checkOperatorForTranche(_tranche,msg.sender,_from) internal returns(bool success) {
+    function _operatorSendTranche(bytes32 _tranche, address _from, address _to, uint256 _value, bytes _data) internal checkOperatorForTranche(_tranche,msg.sender,_from) returns(bool success) {
         require(_checkTransfer(_tranche, _from, _to, _value, _data), "checkTransfer fail");
         require(_to != address(0), "to address should not be zero");
         require(_value <= trancheBalances[_from][_tranche], "balances is not enough");
@@ -363,28 +410,6 @@ contract SecurityToken {
         trancheBalances[_to][_tranche] = trancheBalances[_to][_tranche].add(_value);
         return true;
     }
-
-    /**
-     * @notice Updates internal variables when performing a transfer
-     * @param _from sender of transfer
-     * @param _to receiver of transfer
-     * @param _value value of transfer
-     * @param _data data to indicate validation
-     * @return bool success
-     */
-    function _checkTransfer(bytes32 _tranche, address _from, address _to, uint256 _value, bytes _data) internal checkGranularity(_value) returns(bool success) {
-        if(policyRegistry == address(0)) {
-            return false;
-        }
-
-        bool rc = IPolicyRegistry(policyRegistry).checkTransfer(_tranche, _from, _to, _value, _data);
-        if(rc) {
-            _adjustInvestorData(investorData[_tranche], _from, _to, _value, balanceOf(_to), balanceOf(_from));
-        }
-
-        return rc;
-    }
-
 
     /**
      * @notice mints new mocks and assigns them to the target _investor.
@@ -396,7 +421,6 @@ contract SecurityToken {
     function mint(address _investor, uint256 _value) public returns (bool success) {
         return mintTranche(investorDefaultTranche[_investor], _investor, _value, '');
     }
-
 
     /**
      * @notice Mints new tokens and assigns them to the target _investor.
@@ -422,7 +446,7 @@ contract SecurityToken {
      * @param _data data to indicate validation
      * @return bool success
      */
-    function mintTranche(bytes32 _tranche, address _investor, uint256 _value, bytes _data) public returns (bool success) {
+    function mintTranche(bytes32 _tranche, address _investor, uint256 _value, bytes _data) public onlyIssuerOrRole("mint") returns (bool success) {
         require(_investor != address(0), "Investor is 0");
         require(_checkMint(_tranche, _investor, _value, _data), "checkMint fail");
         totalSupply = totalSupply.add(_value);
@@ -449,40 +473,19 @@ contract SecurityToken {
     }
 
     /**
-     * @notice Updates internal variables when performing a transfer
-     * @param _tranche The tranche to allocate the increase in balance
-     * @param _to receiver of transfer
-     * @param _value value of transfer
-     * @param _data data to indicate validation
-     * @return bool success
-     */
-    function _checkMint(bytes32 _tranche, address _to, uint256 _value, bytes _data) internal checkGranularity(_value) returns(bool success) {
-        if(policyRegistry == address(0)) {
-            return false;
-        }
-
-        bool rc = IPolicyRegistry(policyRegistry).checkMint(_tranche, _to, _value, _data);
-        if(rc) {
-            _adjustInvestorData(investorData[_tranche], address(0), _to, _value, balanceOf(_to), 0);
-        }
-
-        return rc;
-    }
-
-    /**
     * @notice Burn function used to burn the securityToken
-    * @param _tranche The tranche to allocate the increase in balance
+    * @param _tranche The tranche to allocate the decrease in balance
     * @param _value No. of mocks that get burned
     * @param _data data to indicate validation
     */
-    function burn(bytes32 _tranche, uint256 _value, bytes _data) public returns(bool success) {
+    function burn(bytes32 _tranche, uint256 _value, bytes _data) public onlyRole("burn") returns(bool success) {
         require(_burnTranche(_tranche, msg.sender, _value, _data), "Burn invalid");
         return true;
     }
 
     function _burnTranche(bytes32 _tranche, address _investor, uint256 _value, bytes _data) internal returns(bool success) {
         require(_value <= trancheBalances[_investor][_tranche], "Value too high");
-        require(_checkTransfer(_tranche, _investor, address(0), _value, _data));
+        require(_checkBurn(_tranche, _investor, _value, _data), "checkBurn fail");
         trancheBalances[_investor][_tranche] = trancheBalances[_investor][_tranche].sub(_value);
         totalSupply = totalSupply.sub(_value);
         trancheTotalSupply[_tranche] = trancheTotalSupply[_tranche].sub(_value);
@@ -493,12 +496,12 @@ contract SecurityToken {
 
     /**
      * @notice Burn function used to burn the securityToken on behalf of someone else
-     * @param _tranche The tranche to allocate the increase in balance
+     * @param _tranche The tranche to allocate the decrease in balance
      * @param _investor Address for whom to burn mocks
      * @param _value No. of mocks that get burned
      * @param _data data to indicate validation
      */
-    function burnFrom(bytes32 _tranche, address _investor, uint256 _value, bytes _data) checkOperatorForTranche(_tranche,msg.sender,_investor) public returns(bool success) {
+    function burnFrom(bytes32 _tranche, address _investor, uint256 _value, bytes _data) public checkOperatorForTranche(_tranche,msg.sender,_investor)  returns(bool success) {
         require(_burnTranche(_tranche, _investor, _value, _data), "Burn invalid");
         return true;
     }
@@ -511,7 +514,7 @@ contract SecurityToken {
      * @param _value amount of mocks to transfer
      * @param _data data to indicate validation
      */
-    function forceTransfer(bytes32 _tranche, address _from, address _to, uint256 _value, bytes _data) public  {
+    function forceTransfer(bytes32 _tranche, address _from, address _to, uint256 _value, bytes _data) public onlyIssuerOrRole("forceTransfer") {
         require(_to != address(0));
         require(_value <= trancheBalances[_from][_tranche]);
         require(_checkTransfer(_tranche, _from, _to, _value, _data));
@@ -528,7 +531,7 @@ contract SecurityToken {
      * @param _value amount of mocks to transfer
      * @param _data data to indicate validation
      */
-    function forceBurn(bytes32 _tranche, address _from, uint256 _value, bytes _data) public  {
+    function forceBurn(bytes32 _tranche, address _from, uint256 _value, bytes _data) public onlyIssuerOrRole("forceTransfer") {
         require(_burnTranche(_tranche, _from, _value, _data));
         emit ForceBurn(_tranche, msg.sender, _from, _value, true, _data);
     }
@@ -540,7 +543,7 @@ contract SecurityToken {
      * @param _value amount of mocks to transfer
      * @param _data data to indicate validation
      */
-    function changeTranche(bytes32 _from, bytes32 _to, uint256 _value, bytes _data) public  {
+    function changeTranche(bytes32 _from, bytes32 _to, uint256 _value, bytes _data) public {
         require(_value >0);
         require(_value <= trancheBalances[msg.sender][_from]);
         require(_checkChangeTranche(msg.sender, _from, _to, _value, _data));
@@ -629,43 +632,90 @@ contract SecurityToken {
      * and the new allowance by unfortunate transaction ordering. One possible solution to mitigate this
      * race condition is to first reduce the spender's allowance to 0 and set the desired value afterwards:
      * https://github.com/ethereum/EIPs/issues/20#issuecomment-263524729
-     * @param spender The address which will spend the funds.
-     * @param value The amount of mocks to be spent.
+     * @param _spender The address which will spend the funds.
+     * @param _value The amount of mocks to be spent.
      */
-    function approve(address spender, uint256 value) public returns (bool) {
-        require(spender != address(0));
+    function approve(address _spender, uint256 _value) public returns (bool) {
+        require(_spender != address(0));
 
-        if(value>0) {
-            trancheApprovals[msg.sender][investorDefaultTranche[msg.sender]][spender] = true;
+        if(_value>0) {
+            trancheApprovals[msg.sender][investorDefaultTranche[msg.sender]][_spender] = true;
         } else {
-            trancheApprovals[msg.sender][investorDefaultTranche[msg.sender]][spender] = false;
+            trancheApprovals[msg.sender][investorDefaultTranche[msg.sender]][_spender] = false;
         }
-        emit Approval(msg.sender, spender, value);
+        emit Approval(msg.sender, _spender, _value);
         return true;
     }
 
     /**
      * @dev Function to check the amount of mocks that an owner allowed to a spender.
-     * @param owner address The address which owns the funds.
-     * @param spender address The address which will spend the funds.
+     * @param _owner address The address which owns the funds.
+     * @param _spender address The address which will spend the funds.
      * @return A uint256 specifying the amount of mocks still available for the spender.
      */
-    function allowance(address owner, address spender) public view returns (uint256) {
-        if(trancheApprovals[owner][investorDefaultTranche[owner]][spender]) {
-            return trancheTotalSupply[investorDefaultTranche[owner]];
+    function allowance(address _owner, address _spender) public view returns (uint256) {
+        if(trancheApprovals[_owner][investorDefaultTranche[_owner]][_spender]) {
+            return trancheTotalSupply[investorDefaultTranche[_owner]];
         }
         return 0;
+    }
+
+    /**
+     * @notice Updates internal variables when performing a transfer
+     * @param _from sender of transfer
+     * @param _to receiver of transfer
+     * @param _value value of transfer
+     * @param _data data to indicate validation
+     * @return bool success
+     */
+    function _checkTransfer(bytes32 _tranche, address _from, address _to, uint256 _value, bytes _data) internal checkPolicyRegistry checkPolicy(_tranche) checkGranularity(_value) returns(bool success) {
+        bool rc = IPolicyRegistry(policyRegistry).checkTransfer(_tranche, _from, _to, _value, _data);
+        if(rc) {
+            _adjustInvestorData(investorData[_tranche], _from, _to, _value, balanceOf(_to), balanceOf(_from));
+        }
+
+        return rc;
+    }
+
+    /**
+     * @notice Updates internal variables when performing a transfer
+     * @param _tranche The tranche to allocate the increase in balance
+     * @param _to receiver of transfer
+     * @param _value value of transfer
+     * @param _data data to indicate validation
+     * @return bool success
+     */
+    function _checkMint(bytes32 _tranche, address _to, uint256 _value, bytes _data) internal checkPolicyRegistry checkPolicy(_tranche) checkGranularity(_value) returns(bool success) {
+        bool rc = IPolicyRegistry(policyRegistry).checkMint(_tranche, _to, _value, _data);
+        if(rc) {
+            _adjustInvestorData(investorData[_tranche], address(0), _to, _value, balanceOf(_to), 0);
+        }
+
+        return rc;
+    }
+
+    /**
+     * @notice Updates internal variables when performing a transfer
+     * @param _tranche The tranche to allocate the increase in balance
+     * @param _to receiver of transfer
+     * @param _value value of transfer
+     * @param _data data to indicate validation
+     * @return bool success
+     */
+    function _checkBurn(bytes32 _tranche, address _to, uint256 _value, bytes _data) internal checkPolicyRegistry checkPolicy(_tranche) checkGranularity(_value) returns(bool success) {
+        bool rc = IPolicyRegistry(policyRegistry).checkMint(_tranche, _to, _value, _data);
+        if(rc) {
+            _adjustInvestorData(investorData[_tranche], address(0), _to, _value, balanceOf(_to), 0);
+        }
+
+        return rc;
     }
 
     /**
      * @notice check change tranche
      * @return bool success
      */
-    function _checkChangeTranche(address _owner, bytes32 _from, bytes32 _to, uint256 _value, bytes _data) internal checkGranularity(_value) returns(bool success) {
-        if(policyRegistry == address(0)) {
-            return false;
-        }
-
+    function _checkChangeTranche(address _owner, bytes32 _from, bytes32 _to, uint256 _value, bytes _data) internal checkPolicyRegistry checkPolicy(_from) checkPolicy(_to) checkGranularity(_value) returns(bool success) {
         return IPolicyRegistry(policyRegistry).checkChangeTranche(_owner, _from, _to, _value, _data);
     }
 

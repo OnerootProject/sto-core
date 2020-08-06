@@ -165,3 +165,20 @@ async function getTransaction(tx) {
 
     });
 }
+
+async function getBlock(block) {
+    return new Promise((resolve, reject) => {
+        if(!web3) {
+            reject(false);
+        } else {
+            web3.eth.getBlock(block, (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            });
+        }
+
+    });
+}

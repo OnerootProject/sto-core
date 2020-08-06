@@ -1,13 +1,15 @@
 pragma solidity ^0.4.24;
-interface ISecurityToken {
+contract ISecurityToken {
     /**
      * @notice Returns the investor count
      * @return Investor count
      */
+    function policyRegistry() public view returns (address);
+    function racRegistry() public view returns (address);
     function balanceOf(address who) public view returns (uint256);
     function transfer(address to, uint256 value) public returns (bool);
     function transferFrom(address from, address to, uint256 value) public returns (bool);
-
+    function registryPolicy(bytes32 _tranche, address _policy) external;
     function sendTranche(bytes32 _tranche, address _to, uint256 _value, bytes _data) public returns (bool success);
     function getInvestorCount(bytes32 _tranche) external view returns(uint256);
     function getDecimals() external view returns(uint256);

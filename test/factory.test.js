@@ -1,6 +1,7 @@
 const DeployContract = require("./common/deployContract");
 const SecurityToken = artifacts.require('./SecurityToken.sol')
 const DefaultSTO = artifacts.require('./stos/DefaultSTO.sol')
+const RAC = artifacts.require('./RAC.sol')
 const Utils = require("./common/utils");
 const Web3 = require("web3");
 const Web3Utils = require('../utils/Web3Utils');
@@ -26,7 +27,6 @@ contract("SecurityToken", accounts => {
     // Contract Instance Declaration
     let iPolicyRegistry;
     let iSecurityToken;
-    let iGeneralPolicy;
     let iDefaultSTO;
     let iSTGFactory;
     let iDefaultSTOFactory;
@@ -49,8 +49,8 @@ contract("SecurityToken", accounts => {
 
     describe("Generate the SecurityToken", async () => {
 
-        it("Should create DST ok", async () => {
-            tx = await iSTGFactory.create('Create Security Token', 'DST', 18, 1, {from: owner});
+        it("Should create ST ok", async () => {
+            tx = await iSTGFactory.create(owner, 'Create Security Token', 'DST', 18, 1, {from: owner});
             // console.debug('tx:', tx);
             Log.debug('tx logs args:', tx.logs[0].args);
             assert.equal(tx.receipt.status, 1, "Failed to iSTGFactory.create");

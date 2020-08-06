@@ -123,8 +123,15 @@ var SecurityToken = function (web3, param) {
         return factory.callTx(txData);
     };
 
+    factory.changePolicyRegistry = function (policyRegistry) {
+        factory.gasLimit = 49284*2;
+        let txData = {
+            data: factory.instance.changePolicyRegistry.getData(policyRegistry)
+        };
+        return factory.sendTx(txData);
+    };
+
     factory.registryPolicy = function (tranche, policy) {
-        console.log('tranche:', tranche);
         factory.gasLimit = 49284*2;
         let txData = {
             data: factory.instance.registryPolicy.getData(tranche, policy)
@@ -133,7 +140,7 @@ var SecurityToken = function (web3, param) {
     };
 
     factory.mint = function (investor, amount) {
-        factory.gasLimit = 100000*2;
+        factory.gasLimit = 60000*4;
         let txData = {
             data: factory.instance.mint.getData(investor, amount)
         };
@@ -141,7 +148,7 @@ var SecurityToken = function (web3, param) {
     };
 
     factory.batchMint = function (investors, amounts) {
-        factory.gasLimit = 100000*2 * investors.length;
+        factory.gasLimit = 60000*4 * investors.length;
         let txData = {
             data: factory.instance.batchMint.getData(investors, amounts)
         };
@@ -149,7 +156,7 @@ var SecurityToken = function (web3, param) {
     };
 
     factory.mintTranche = function (tranche, investor, amount) {
-        factory.gasLimit = 100000*2;
+        factory.gasLimit = 60000*4;
         let txData = {
             data: factory.instance.mintTranche.getData(tranche, investor, amount, '')
         };
@@ -157,7 +164,7 @@ var SecurityToken = function (web3, param) {
     };
 
     factory.batchMintTranche = function (tranche, investors, amounts) {
-        factory.gasLimit = 100000*2 * investors.length;
+        factory.gasLimit = 60000*4 * investors.length;
         let txData = {
             data: factory.instance.batchMintTranche.getData(tranche, investors, amounts, '')
         };

@@ -1,4 +1,5 @@
 const DeployContract = require("./common/deployContract");
+const RAC = artifacts.require('./RAC.sol')
 const Utils = require("./common/utils");
 const Web3 = require("web3");
 const Web3Utils = require('../utils/Web3Utils');
@@ -20,6 +21,7 @@ contract("SecurityToken", accounts => {
     let iPolicyRegistry;
     let iSecurityToken;
     let iGeneralPolicy;
+    let iRAC;
 
     before(async () => {
         // Accounts setup
@@ -33,6 +35,10 @@ contract("SecurityToken", accounts => {
         iPolicyRegistry = instances.iPolicyRegistry;
         iSecurityToken = instances.iSecurityToken;
         iGeneralPolicy = instances.iGeneralPolicy;
+        iRAC = instances.iRAC;
+
+        let tx = await iSecurityToken.changePolicyRegistry(iPolicyRegistry.address, {from: owner});
+        assert.equal(tx.receipt.status, 1, "Failed to changePolicyRegistry");
 
     });
 
@@ -52,7 +58,7 @@ contract("SecurityToken", accounts => {
             let fromTime = Web3Utils.latestTime(web3);
             let toTime = fromTime + Utils.duration.days(100);
             let expiryTime = fromTime - Utils.duration.days(100);
-            let tx = await iGeneralPolicy.modifyWhitelist('', investor1, fromTime, toTime, expiryTime, true, {
+            let tx = await iGeneralPolicy.modifyWhitelist(investor1, fromTime, toTime, expiryTime, true, '', {
                 from: owner,
                 gas: 6000000
             });
@@ -72,7 +78,7 @@ contract("SecurityToken", accounts => {
             let toTime = fromTime;
             let expiryTime = fromTime + Utils.duration.days(100);
 
-            let tx = await iGeneralPolicy.modifyWhitelist('', investor2, fromTime, toTime, expiryTime, true, {
+            let tx = await iGeneralPolicy.modifyWhitelist(investor2, fromTime, toTime, expiryTime, true,'',  {
                 from: owner,
                 gas: 6000000
             });
@@ -96,7 +102,7 @@ contract("SecurityToken", accounts => {
             let toTime = fromTime;
             let expiryTime = fromTime + Utils.duration.days(100);
 
-            let tx = await iGeneralPolicy.modifyWhitelist('', investor1, fromTime, toTime, expiryTime, true, {
+            let tx = await iGeneralPolicy.modifyWhitelist(investor1, fromTime, toTime, expiryTime, true,'',  {
                 from: owner,
                 gas: 6000000
             });
@@ -129,13 +135,13 @@ contract("SecurityToken", accounts => {
             let fromTime = Web3Utils.latestTime(web3);
             let toTime = fromTime;
             let expiryTime = fromTime + Utils.duration.days(100);
-            let tx = await iGeneralPolicy.modifyWhitelist('', investor1, fromTime, toTime, expiryTime, true, {
+            let tx = await iGeneralPolicy.modifyWhitelist(investor1, fromTime, toTime, expiryTime, true,'',  {
                 from: owner,
                 gas: 6000000
             });
             assert.equal(tx.logs[0].args._investor, investor1, "Failed in adding the investor in whitelist");
 
-            tx = await iGeneralPolicy.modifyWhitelist('', investor2, fromTime, toTime, expiryTime, true, {
+            tx = await iGeneralPolicy.modifyWhitelist(investor2, fromTime, toTime, expiryTime, true, '', {
                 from: owner,
                 gas: 6000000
             });

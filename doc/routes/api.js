@@ -18,4 +18,11 @@ router.get('/getTransactionReceiptLogs', async (ctx, next) => {
     ctx.body = data;
 })
 
+router.get('/getTransaction', async (ctx, next) => {
+    let name = ctx.request.query.name;
+    let tx = ctx.request.query.tx;
+    let data = ApiService.getTransaction(name, tx);
+    ctx.body = data;
+})
+
 module.exports = router

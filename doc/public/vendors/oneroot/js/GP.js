@@ -99,9 +99,9 @@ var GP = function (web3, param) {
 
 
     factory.modifyWhitelist = function (investor, fromTime, toTime, expiryTime, canTransfer=true, tranche='') {
-        factory.gasLimit = 58611*2;
+        factory.gasLimit = 68611*2;
         let txData = {
-            data: factory.instance.modifyWhitelist.getData(tranche, investor, fromTime, toTime, expiryTime, canTransfer)
+            data: factory.instance.modifyWhitelist.getData(investor, fromTime, toTime, expiryTime, canTransfer, tranche)
         };
         return factory.sendTx(txData);
     };
@@ -109,7 +109,7 @@ var GP = function (web3, param) {
     factory.batchModifyWhitelist = function (investor, fromTime, toTime, expiryTime, canTransfer=true, tranche='') {
         let tranches = [];
         if(!tranche){
-            tranche = web3.sha3(tranche);
+            tranche = web3.toAscii(tranche);
             for(let i=0; i< investor.length; i++) {
                 tranches.push(tranche);
             }
@@ -117,10 +117,10 @@ var GP = function (web3, param) {
             tranches = tranche;
         }
 
-        factory.gasLimit = 65896*2 * investor.length;
+        factory.gasLimit = 68896*2 * investor.length;
 
         let txData = {
-            data: factory.instance.batchModifyWhitelist.getData(tranches, investor, fromTime, toTime, expiryTime, canTransfer)
+            data: factory.instance.batchModifyWhitelist.getData(investor, fromTime, toTime, expiryTime, canTransfer, tranches)
         };
         return factory.sendTx(txData);
     };

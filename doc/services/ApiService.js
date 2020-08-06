@@ -9,6 +9,7 @@ var GeneralPolicy = require('../../build/contracts/GeneralPolicy.json')
 var DefaultSTO = require('../../build/contracts/DefaultSTO.json')
 var DefaultSTOFactory = require('../../build/contracts/DefaultSTOFactory.json')
 var STGFactory = require('../../build/contracts/STGFactory.json')
+var RAC = require('../../build/contracts/RAC.json')
 
 // 创建web3对象
 var web3 = new Web3();
@@ -64,6 +65,8 @@ module.exports= class ApiService {
             abi =  DefaultSTOFactory.abi;
         } else if(name=='STGFactory') {
             abi =  STGFactory.abi;
+        } else if(name=='RAC') {
+            abi =  RAC.abi;
         }
 
         if(!abi) {
@@ -71,6 +74,34 @@ module.exports= class ApiService {
         }
         if(receipt && receipt.hasOwnProperty('logs')) {
             receipt.logs = Web3Utils.decodeEventsForContract(abi, receipt.logs);
+            return Message.success(receipt);
+        }
+        return Message.fail();
+    }
+
+
+    static getTransaction(name, tx) {
+        let receipt = web3.eth.getTransaction(tx);
+        let abi='';
+        if(name=='SecurityToken') {
+            abi = SecurityToken.abi;
+        } else if(name=='GeneralPolicy') {
+            abi =  GeneralPolicy.abi;
+        } else if(name=='DefaultSTO') {
+            abi =  DefaultSTO.abi;
+        } else if(name=='DefaultSTOFactory') {
+            abi =  DefaultSTOFactory.abi;
+        } else if(name=='STGFactory') {
+            abi =  STGFactory.abi;
+        } else if(name=='RAC') {
+            abi =  RAC.abi;
+        }
+
+        if(!abi) {
+            return Message.fail();
+        }
+        if(receipt && receipt.hasOwnProperty('input')) {
+            receipt.input = Web3Utils.decodeInputForContract(abi, receipt.input);
             return Message.success(receipt);
         }
         return Message.fail();

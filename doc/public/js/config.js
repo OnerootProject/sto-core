@@ -1,11 +1,12 @@
 config = {
     contract: {
-        PolicyRegistry: '0x9a20f92e435701c36d565d22208d0d7e3c6f548f',
-        STGFactory: '0xadea9313274b96e5924025e1813b0674f5ab195c',
-        STOFactory: '0x7d8a6f17361b9ee7f631c608a43e9d2edaa915dd',
-        ST: '0xdfd038b3a52f2c228b3bf04101fc547d883257dd',
-        GP: '0x4ed592336f7612553f53429b660f961322b07884',
-        STO: '0x9aaabd453c64a51a430dff84d83bf53bf56b95b2'
+        PolicyRegistry: '0x63b9bc95f9768738cefe1089b9b0e013b58fbea6',
+        RAC: '0x6c49d086f2ea28aafa23873e0b7bfd05fd8666cb',
+        STGFactory: '0xd7b506f4dd21782e67f5aeae7618c024f0cef2d1',
+        STOFactory: '0x555d7a4d15ecaee4804edd49268c7e56b9715d36',
+        ST: '0x105cc307089756b66095b80125067597135cf57e',
+        GP: '0xe30ad823ffa25d0ad3ae11168ee9901c8ac674b0',
+        STO: '0x01dc6eb56681edcf05366d2e6220872ecc3349c3'
     }
 };
     

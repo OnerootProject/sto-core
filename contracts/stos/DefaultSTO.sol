@@ -4,15 +4,19 @@ import "../interfaces/ISTO.sol";
 import "../interfaces/ISecurityToken.sol";
 import "../modules/Pausable.sol";
 import "../libraries/SafeMath.sol";
+import "../interfaces/ICheckRAC.sol";
+import "../modules/DataType.sol";
 
 /**
  * @title STO module for standard maxAmount-offering crowd sale
  */
-contract DefaultSTO is Pausable {
+contract DefaultSTO is Pausable, DataType {
     using SafeMath for uint256;
 
     uint8 public version = 1;
     string public name = "DefaultSTO";
+    address public owner;
+    address public racRegistry;
 
 
     mapping (address => uint256) public fundsRaised;
@@ -71,10 +75,40 @@ contract DefaultSTO is Pausable {
      * @notice constructor
      * @param _securityToken security token address
      */
-    constructor (address _securityToken) public
+//    constructor (address _securityToken) public
+//    {
+//        securityToken = _securityToken;
+//        paused = true;
+//        owner = msg.sender;
+//    }
+
+    /**
+     * @notice constructor
+     * @param _securityToken security token address
+     * @param _tranche special tranche
+     * @param _paused value: false or true
+     * @param _addresses value: [_fundRaiseToken, _fundsReceiver]
+     * @param _values  value: [_startTime, _endTime, _maxAmount, _rate, _minInvestorAmount, _maxInvestorAmount, _maxInvestors, _lockMonths]
+     */
+    constructor (address _securityToken, bytes32 _tranche, bool _paused, address[] _addresses, uint256[] _values) public
     {
         securityToken = _securityToken;
         paused = true;
+        owner = msg.sender;
+        racRegistry =  ISecurityToken(_securityToken).racRegistry();
+        _configure(_tranche, _paused, _addresses, _values);
+    }
+
+    /**
+    * @dev modifier to scope access to a single role (uses msg.sender as addr)
+    * @param _action the name of the role
+    * // reverts
+    */
+    modifier onlyRole(string _action)
+    {
+        require(racRegistry != address(0), "RAC does not Register");
+        require(ICheckRAC(racRegistry).check(msg.sender, stringToBytes32(_action)), "Permission deny");
+        _;
     }
 
     /**
@@ -85,7 +119,12 @@ contract DefaultSTO is Pausable {
      * @param _addresses value: [_fundRaiseToken, _fundsReceiver]
      * @param _values  value: [_startTime, _endTime, _maxAmount, _rate, _minInvestorAmount, _maxInvestorAmount, _maxInvestors, _lockMonths]
      */
-    function configure(bytes32 _tranche, bool _paused, address[] _addresses, uint256[] _values) public {
+    function configure(bytes32 _tranche, bool _paused, address[] _addresses, uint256[] _values) public onlyRole('configureSTO') {
+        _configure(_tranche, _paused, _addresses, _values);
+        emit ConfigureSTO();
+    }
+
+    function _configure(bytes32 _tranche, bool _paused, address[] _addresses, uint256[] _values) internal {
         require(_addresses.length == 2, "invalid _addresses");
         require(_values.length == 8, "invalid _values");
 
@@ -113,8 +152,6 @@ contract DefaultSTO is Pausable {
         require(fundsReceiver != address(0), "Zero address is not permitted");
         require(endTime > startTime, "Date parameters are not valid");
         require(maxAmount > 0, "MaxAmount should be greater than 0");
-
-        emit ConfigureSTO();
     }
 
     /**
@@ -221,6 +258,7 @@ contract DefaultSTO is Pausable {
     function _preValidatePurchase(address _beneficiary, uint256 _amount) internal view {
         require(_beneficiary != address(0), "Beneficiary address should not be 0x");
         require(_amount != 0, "Amount invested should not be equal to 0");
+        require(investorCount <= maxInvestors, "investorCount should be equal or less than maxInvestors");
         require(totalTokensSold.add(_getTokenAmount(_amount)) <= maxAmount, "Investment more than maxAmount is not allowed");
         require(_amount >= minInvestorAmount, "Amount invested should be equal or greater than minInvestorAmount");
         require(payBaseTokens[_beneficiary][fundRaiseToken].add(_amount) <= maxInvestorAmount, "Amount invested more than maxAmount is not allowed");
@@ -235,6 +273,5 @@ contract DefaultSTO is Pausable {
     function _getTokenAmount(uint256 _amount) internal view returns (uint256) {
         return _amount.mul(rate);
     }
-
 
 }

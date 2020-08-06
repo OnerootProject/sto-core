@@ -15,7 +15,7 @@
           <div class="card-header">createSTO(securityToken, tranche, paused, addresses, values)</div>
           <div class="card-body">
             <div class="bd-example">
-              部署STO合约
+              部署STO合约, 注：先要给STOFactory授权manageRole权限
           </div>
             </div>
         </div>
@@ -41,8 +41,10 @@
     var _maxInvestorAmount = web3.toWei(1000000,'ether');
     var _maxInvestors = 200;
     var _lockMonths = 12;
+    var _fundRaiseToken = '0x0000000000000000000000000000000000000000';
+    var _fundsReceiver = '0x866e43291293892bd0980adc4ec5166f33623d86';
 
-    var addresses = ['0x0000000000000000000000000000000000000000','0x866e43291293892bd0980adc4ec5166f33623d86'];
+    var addresses = [_fundRaiseToken, _fundsReceiver];
     var values = [_startTime, _endTime, _maxAmount, _rate, _minInvestorAmount, _maxInvestorAmount, _maxInvestors, _lockMonths]
 
     console.log(_securityToken, _tranche, _paused, addresses, values);

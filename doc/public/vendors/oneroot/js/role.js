@@ -1,28 +1,21 @@
-var RAC_ROLES=[
+var roles=[
     'manageRole',
+    'modifyWhitelist',
+    'configPolicy',
     'createST',
-    'pausePolicyRegistry',
-    'manageContract'
-];
-
-var ST_ROLES=[
-    'manageRole',
-    'configure',
+    'createSTO',
+    'configureSTO',
+    'registryPolicy',
+    'changeIssuer',
+    'changeGranularity',
     'mint',
     'burn',
     'forceTransfer',
     'forceBurn'
 ];
 
-var GP_ROLES=[
-    'manageRole',
-    'modifyWhitelist'
-];
-
 (function(exports){
 
-    exports.RAC_ROLES = RAC_ROLES;
-    exports.ST_ROLES = ST_ROLES;
-    exports.GP_ROLES = GP_ROLES;
+    exports.roles = roles;
 
 }(typeof exports === 'undefined' ? this.share = {} : exports));

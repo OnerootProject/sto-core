@@ -45,6 +45,9 @@ router.get('/approve', async (ctx, next) => {
 router.get('/authorizeOperator', async (ctx, next) => {
     await ctx.render('authorizeOperator', data)
 })
+router.get('/changePolicyRegistry', async (ctx, next) => {
+    await ctx.render('changePolicyRegistry', data)
+})
 router.get('/registryPolicy', async (ctx, next) => {
     await ctx.render('registryPolicy', data)
 })
@@ -94,14 +97,21 @@ router.get('/buyWithToken', async (ctx, next) => {
     await ctx.render('buyWithToken', data)
 })
 
-router.get('/string', async (ctx, next) => {
-    ctx.body = 'koa2 string'
+//rac
+router.get('/checkRole', async (ctx, next) => {
+    await ctx.render('checkRole', data)
 })
-
-router.get('/json', async (ctx, next) => {
-    ctx.body = {
-        title: 'koa2 json'
-    }
+router.get('/addRole', async (ctx, next) => {
+    await ctx.render('addRole', data)
+})
+router.get('/batchAddRole', async (ctx, next) => {
+    await ctx.render('batchAddRole', data)
+})
+router.get('/removeRole', async (ctx, next) => {
+    await ctx.render('removeRole', data)
+})
+router.get('/batchRemoveRole', async (ctx, next) => {
+    await ctx.render('batchRemoveRole', data)
 })
 
 module.exports = router

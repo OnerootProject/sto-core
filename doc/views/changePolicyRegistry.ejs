@@ -6,18 +6,18 @@
     <!-- Breadcrumb-->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">ST合约</li>
-      <li class="breadcrumb-item active">获取约策</li>
+      <li class="breadcrumb-item active">修改ST合约策略注册中心</li>
     </ol>
 
     <div class="container-fluid">
       <div class="animated fadeIn">
         <div class="card">
-          <div class="card-header">getPolicy(securityToken)</div>
+          <div class="card-header">changePolicyRegistry(policyRegistry)</div>
           <div class="card-body">
             <div class="bd-example">
-              获取关联策合约地址
-          </div>
+              修改ST合约策略注册中心
             </div>
+          </div>
         </div>
         </div>
     </div>
@@ -29,10 +29,10 @@
 <script type="text/javascript">
 
   function runCode() {
-    getPolicy(config.contract.ST).then();
+    changePolicyRegistry(config.contract.PolicyRegistry).then();
   }
 
-  async function getPolicy(securityToken) {
+  async function changePolicyRegistry(policyRegistry) {
     var res = getWeb3Account();
     var account = res.data;
     var result = "账号：" + account +"\n";
@@ -43,11 +43,12 @@
     }
 
     try {
-      var param = {address: securityToken, abi: abiSecurityToken, sender: account};
+      var nonce = await getWeb3Nonce(account);
+      result += "nonce：" + nonce + "\n";
+      var param = {address: config.contract.ST, abi: abiSecurityToken, sender: account, nonce: nonce};
       var st = new SecurityToken(web3, param);
-      res  = await st.getPolicy('0x0000000000000000000000000000000000000000000000000000000000000000');
-      result += "securityToken：" + securityToken + "\n";
-      result += "policy address：0x" + web3.fromWei(res, 'ether') + "\n";
+      res  = await st.changePolicyRegistry(policyRegistry);
+      result += "tx：" + res + "\n";
     } catch (e) {
       result += "error：" + e + "\n";
     }
@@ -60,7 +61,7 @@
   $(document).ready(function() {
     var code = runCode.toString() + "\n\n";
     code += getWeb3Account.toString()+"\n";
-    code += getPolicy.toString() + "\n";
+    code += changePolicyRegistry.toString() + "\n";
     setCode(code);
 
   });
