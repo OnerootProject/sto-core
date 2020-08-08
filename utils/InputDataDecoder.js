@@ -82,13 +82,15 @@ class InputDataDecoder {
                     // console.log('inputs:', inputs);
                     for(let i=0; i< inputs.length; i++) {
                         if(inputs[i] instanceof Object && Buffer.isBuffer(inputs[i])){
-                            inputs[i] = inputs[i].toString('hex');
+                            inputs[i] = '0x'+ inputs[i].toString('hex');
                         } else if(Array.isArray(inputs[i])) {
                             for(let j=0; j< inputs[i].length; j++) {
                                 if(inputs[i][j] instanceof Object && Buffer.isBuffer(inputs[i][j])){
-                                    inputs[i][j] = inputs[i][j].toString('hex');
+                                    inputs[i][j] = '0x'+ inputs[i][j].toString('hex');
                                 }
                             }
+                        } else {
+                            inputs[i] = '0x' + inputs[i];
                         }
                     }
                 }
