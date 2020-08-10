@@ -71,8 +71,8 @@ router.get('/mintTranche', async (ctx, next) => {
 })
 
 //gp
-router.get('/modifyWhitelist', async (ctx, next) => {
-    await ctx.render('modifyWhitelist', data)
+router.get('/modifyWhiteList', async (ctx, next) => {
+    await ctx.render('modifyWhiteList', data)
 })
 
 //gp

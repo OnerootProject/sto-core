@@ -29,7 +29,7 @@
 <script type="text/javascript">
 
   function runCode() {
-    var securityToken = config.contract.ST, tranche='', investor='0x866e43291293892bd0980adc4ec5166f33623d86', amount=web3.toWei(300,'ether');
+    var securityToken = config.contract.ST, tranche='', investor='0x866e43291293892bd0980adc4ec5166f33623d86', amount=web3.toWei(2,'ether');
     console.log(securityToken, tranche, investor, amount);
     mintTranche(securityToken, tranche, investor, amount).then();
   }
