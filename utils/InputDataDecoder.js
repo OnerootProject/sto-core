@@ -24,7 +24,8 @@ class InputDataDecoder {
             }
 
             const name = obj.name || null
-            const types = obj.inputs ? obj.inputs.map(x => x.type) : []
+            const _types = obj.inputs ? obj.inputs.map(x => x.type) : []
+            const params = obj.inputs ? obj.inputs.map(x => x.name) : []
 
             // take last 32 bytes
             data = data.slice(-256)
@@ -37,12 +38,21 @@ class InputDataDecoder {
                 data = `0x${data}`
             }
 
-            const inputs = ethers.Interface.decodeParams(types, data)
+            const inputs = ethers.Interface.decodeParams(_types, data)
 
+            let args ={};
+            for(let i=0; i<params.length; i++) {
+                args[params[i]] = inputs[i];
+            }
+
+            let types ={};
+            for(let i=0; i<params.length; i++) {
+                types[params[i]] = _types[i];
+            }
             return {
                 name,
                 types,
-                inputs
+                args
             }
         }
 
@@ -67,9 +77,9 @@ class InputDataDecoder {
         const result = this.abi.reduce((acc, obj) => {
             if (obj.type === 'constructor') return acc
             const name = obj.name || null
-            const types = obj.inputs ? obj.inputs.map(x => x.type) : []
+            const _types = obj.inputs ? obj.inputs.map(x => x.type) : []
             const params = obj.inputs ? obj.inputs.map(x => x.name) : []
-            const hash = ethabi.methodID(name, types).toString(`hex`)
+            const hash = ethabi.methodID(name, _types).toString(`hex`)
 
             if (hash === methodId) {
                 // https://github.com/miguelmota/ethereum-input-data-decoder/issues/8
@@ -77,27 +87,20 @@ class InputDataDecoder {
                     inputsBuf = Buffer.concat([new Buffer(12), inputsBuf.slice(12,32), inputsBuf.slice(32)])
                 }
 
-                const inputs = ethabi.rawDecode(types, inputsBuf)
+                const inputs = ethabi.rawDecode(_types, inputsBuf)
                 if (inputs) {
-                    // console.log('inputs:', inputs);
-                    for(let i=0; i< inputs.length; i++) {
-                        if(inputs[i] instanceof Object && Buffer.isBuffer(inputs[i])){
-                            inputs[i] = '0x'+ inputs[i].toString('hex');
-                        } else if(Array.isArray(inputs[i])) {
-                            for(let j=0; j< inputs[i].length; j++) {
-                                if(inputs[i][j] instanceof Object && Buffer.isBuffer(inputs[i][j])){
-                                    inputs[i][j] = '0x'+ inputs[i][j].toString('hex');
-                                }
-                            }
-                        } else {
-                            inputs[i] = '0x' + inputs[i];
-                        }
-                    }
+                    console.log('inputs:', inputs);
+                    this.parseInputs(inputs, _types);
                 }
 
                 let args ={};
                 for(let i=0; i<params.length; i++) {
                     args[params[i]] = inputs[i];
+                }
+
+                let types ={};
+                for(let i=0; i<params.length; i++) {
+                    types[params[i]] = _types[i];
                 }
 
                 return {
@@ -108,7 +111,7 @@ class InputDataDecoder {
             }
 
             return acc
-        }, {name: null, types: [], args: []})
+        }, {data})
 
         if (!result.name) {
             try {
@@ -116,10 +119,25 @@ class InputDataDecoder {
                 if (decoded) {
                     return decoded
                 }
-            } catch(err) { }
+            } catch(err) { console.log(err)}
         }
 
         return result
+    }
+
+    parseInputs(inputs, params) {
+        for(let i=0; i< inputs.length; i++) {
+            if(Array.isArray(inputs[i])) {
+                this.parseInputs(inputs[i], params);
+            } else if(params[i] =='address') {
+                inputs[i] = '0x' + inputs[i];
+            } else if(inputs[i] instanceof Object && Buffer.isBuffer(inputs[i])) {
+                inputs[i] = '0x' + inputs[i].toString('hex');
+            } else if(inputs[i] instanceof Object && params[i].substring(0,4) =='uint') {
+                let bn = new ethers.utils.BigNumber('0x'+ inputs[i].toString('hex'));
+                inputs[i] = bn.toString();
+            }
+        }
     }
 }
 

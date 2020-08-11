@@ -7,6 +7,9 @@ var Log = require('./LogConsole');
 class Web3Utils{
 
     static decodeEventsForContract(abi, logs) {
+        if(!abi || !logs) {
+            return logs;
+        }
         var decoders = abi.filter(function (json) {
             return json.type === 'event';
         }).map(function(json) {
@@ -20,11 +23,11 @@ class Web3Utils{
                 return (decoder.signature() == log.topics[0].replace("0x",""));
             })
             if (decoder) {
-                console.log('decoder:',decoder['_params']);
-                let types = [];
+                // console.log('decoder:',decoder['_params']);
+                let types = {};
                 for(let i=0; i<decoder['_params'].length; i++) {
                     console.log('decoder _params:',decoder['_params'][i]);
-                    types.push(decoder['_params'][i]['type']);
+                    types[decoder['_params'][i]['name']]= decoder['_params'][i]['type'];
                 }
 
                 log['types'] = types;
@@ -52,6 +55,9 @@ class Web3Utils{
     };
 
     static decodeInputForContract(abi, data) {
+        if(!abi || !data) {
+            return data;
+        }
         let decoder = new InputDataDecoder(abi);
         let result = decoder.decodeData(data);
         // console.log(result);
