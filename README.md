@@ -23,12 +23,11 @@
   5. Import wallet to metamask
 
 
-
- >  ------------------------- Contracts' address(Kovan): ------------------------------
- >  PolicyRegistry:                          0x9a20f92e435701c36d565d22208d0d7e3c6f548f
- >  STGFactory:                              0xadea9313274b96e5924025e1813b0674f5ab195c
- >  DefaultSTOFactory:                       0x7d8a6f17361b9ee7f631c608a43e9d2edaa915dd
- >  SecurityToken:                           0xdfd038b3a52f2c228b3bf04101fc547d883257dd
- >  SecurityTokenPolicy:                     0x4ed592336f7612553f53429b660f961322b07884
- >  defaultSTO:                              0x9aaabd453c64a51a430dff84d83bf53bf56b95b2
- >  ---------------------------------------------------------------------------------
+# Ropsten
+- PolicyRegistry: '0x40a7226e860d7a1c936d8f0025a868f00b4e88a0',
+- RAC: '0xb6cdc214f68824c5eb03518b7167a3d6f4a32567',
+- STGFactory: '0x8ab67c3c98dad52cfba4f3df09fbb9bee1199608',
+- STOFactory: '0xd791e66356289e4546fa7afb9a19534359628762',
+- ST: '0x1b2e3a10bbb267207afbea1da5fa42d8855a43ac',
+- GP: '0xeecf6b02b0674136aa24df534ca2be5ad6af5f7e',
+- STO: '0xf844d13caae1bfe8c43655c1c1085c9271bce4d4'

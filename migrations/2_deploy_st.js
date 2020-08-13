@@ -150,4 +150,12 @@ function generateCode(configContent) {
     abi += "    exports.abiRAC = abiRAC;\n";
     abi += "}(typeof exports === 'undefined' ? this.share = {} : exports));\n";
     FileUtils.writeFile(__dirname+'/../doc/public/vendors/oneroot/js/abiRAC.js', abi);
+
+
+    contractJson = require('../build/contracts/PolicyRegistry');
+    abi = "var abiPolicyRegistry =" + JsonUtils.stringify(contractJson.abi) + ";";
+    abi += "(function(exports){\n";
+    abi += "    exports.abiPolicyRegistry = abiPolicyRegistry;\n";
+    abi += "}(typeof exports === 'undefined' ? this.share = {} : exports));\n";
+    FileUtils.writeFile(__dirname+'/../doc/public/vendors/oneroot/js/abiPolicyRegistry.js', abi);
 }

@@ -70,13 +70,19 @@ module.exports= class ApiService {
         }
 
         if(!abi) {
-            return Message.fail();
+            return Message.fail('abi is null');
         }
         if(receipt && receipt.hasOwnProperty('logs')) {
-            receipt.logs = Web3Utils.decodeEventsForContract(abi, receipt.logs);
-            return Message.success(receipt);
+            try {
+                receipt.logs = Web3Utils.decodeEventsForContract(abi, receipt.logs);
+                return Message.success(receipt);
+            } catch (e) {
+                Log.error('fail to decodeEventsForContract:', e);
+            }
+
         }
-        return Message.fail();
+        Log.error('fail to getTransactionReceiptLogs:'+ tx, receipt);
+        return Message.fail(receipt);
     }
 
 
@@ -98,12 +104,18 @@ module.exports= class ApiService {
         }
 
         if(!abi) {
-            return Message.fail();
+            return Message.fail('abi is null');
         }
         if(receipt && receipt.hasOwnProperty('input')) {
-            receipt.input = Web3Utils.decodeInputForContract(abi, receipt.input);
-            return Message.success(receipt);
+            try {
+                receipt.input = Web3Utils.decodeInputForContract(abi, receipt.input);
+                return Message.success(receipt);
+            } catch (e) {
+                Log.error('fail to decodeInputForContract:', e);
+            }
+
         }
-        return Message.fail();
+        Log.error('fail to getTransaction:'+ tx, receipt);
+        return Message.fail(receipt);
     }
 }

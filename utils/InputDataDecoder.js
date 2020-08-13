@@ -76,6 +76,7 @@ class InputDataDecoder {
 
         const result = this.abi.reduce((acc, obj) => {
             if (obj.type === 'constructor') return acc
+            // console.debug('inputs:',obj.inputs);
             const name = obj.name || null
             const _types = obj.inputs ? obj.inputs.map(x => x.type) : []
             const params = obj.inputs ? obj.inputs.map(x => x.name) : []
@@ -128,7 +129,12 @@ class InputDataDecoder {
     parseInputs(inputs, params) {
         for(let i=0; i< inputs.length; i++) {
             if(Array.isArray(inputs[i])) {
-                this.parseInputs(inputs[i], params);
+                let _params = [];
+                for(let j=0; j<inputs[i].length; j++) {
+                    let _param = params[i].replace('[]','');
+                    _params.push(_param);
+                }
+                this.parseInputs(inputs[i], _params);
             } else if(params[i] =='address') {
                 inputs[i] = '0x' + inputs[i];
             } else if(inputs[i] instanceof Object && Buffer.isBuffer(inputs[i])) {
