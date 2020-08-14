@@ -14,7 +14,7 @@ router.post('/verifySign', async (ctx, next) => {
 router.get('/getTransactionReceiptLogs', async (ctx, next) => {
     let name = ctx.request.query.name;
     let tx = ctx.request.query.tx;
-    let data = ApiService.getTransactionReceiptLogs(name, tx);
+    let data = await ApiService.getTransactionReceiptLogs(name, tx);
     ctx.body = data;
 })
 

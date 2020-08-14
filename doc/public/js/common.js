@@ -78,7 +78,7 @@ function getWeb3Account() {
     // Checking if Web3 has been injected by the browser (Mist/MetaMask)
     if (typeof web3 !== 'undefined') {
         // Use Mist/MetaMask's provider
-        console.log("Use Mist/MetaMask's provider");
+        console.log("Use Mist/MetaMask's provider, version:", web3.version);
         web3 = new Web3(web3.currentProvider);
         if(!web3.currentProvider.isMetaMask) {
             return {
@@ -182,3 +182,60 @@ async function getBlock(block) {
 
     });
 }
+
+
+function decodeEventsForContract(abi, logs) {
+    var SolidityEvent = require("web3/lib/web3/event.js");
+    if(!abi || !logs) {
+        return logs;
+    }
+    var decoders = abi.filter(function (json) {
+        return json.type === 'event';
+    }).map(function(json) {
+        // note first and third params only required only by enocde and execute;
+        // so don't call those!
+        return new SolidityEvent(null, json, null);
+        // return new  _web3.eth.contract(json);
+    });
+
+    let result = logs.map(function (log) {
+        var decoder = decoders.find(function(decoder) {
+            return (decoder.signature() == log.topics[0].replace("0x",""));
+        })
+        if (decoder) {
+            // console.log('decoder:',decoder['_params']);
+            let types = {};
+            for(let i=0; i<decoder['_params'].length; i++) {
+                console.log('decoder _params:',decoder['_params'][i]);
+                types[decoder['_params'][i]['name']]= decoder['_params'][i]['type'];
+            }
+
+            log['types'] = types;
+            return decoder.decode(log);
+        } else {
+            console.log('un decoder:',log);
+            return log;
+        }
+    }).map(function (log) {
+        let abis = abi.find(function(json) {
+            return (json.type === 'event' && log.event === json.name);
+        });
+        // if (abis && abis.inputs) {
+        //     abis.inputs.forEach(function (param, i) {
+        //         if (param.type == 'bytes32') {
+        //             log.args[param.name] = utils.toAscii(log.args[param.name]);
+        //         }
+        //     })
+        // }
+        return log;
+    });
+
+    // Log.debug(result);
+    return result;
+}
+
+function newWeb3Eth(_wsServer) {
+    console.log('newWeb3Eth:',Web3Eth);
+    return new Web3Eth(_wsServer);
+}
+

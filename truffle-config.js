@@ -18,8 +18,7 @@ module.exports = {
             host: 'localhost',
             port: 8545,
             network_id: '*',
-            gas: 6600000,
-            gasPrice: 10000000000,
+            gas: 6600000
         },
         main: {
             provider: function() {

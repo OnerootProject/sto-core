@@ -104,6 +104,20 @@ var STO = function (web3, param) {
         return factory.callTx(txData);
     };
 
+    factory.racRegistry = function () {
+        let txData = {
+            data: factory.instance.racRegistry.getData()
+        };
+        return factory.callTx(txData);
+    };
+
+    factory.getSTODetails = function () {
+        let txData = {
+            data: factory.instance.getSTODetails.getData()
+        };
+        return factory.callTx(txData);
+    };
+
     factory.configure = function (tranche, paused, addresses, values) {
         factory.gasLimit = 178176*2;
         let txData = {

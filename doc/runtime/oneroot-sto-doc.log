@@ -1,0 +1,142 @@
+[debug]  [ [ 'web3.version:',
+    { api: '0.20.7',
+      node: [Getter],
+      getNode: [Function],
+      network: [Getter],
+      getNetwork: [Function],
+      ethereum: [Getter],
+      getEthereum: [Function],
+      whisper: [Getter],
+      getWhisper: [Function] } ] ]
+[debug]  [ [ 'chainAddress:https://ropsten.infura.io/v3/4e987044d78c44319523b16c7bf0412c' ] ]
+[debug]  [ [ 'connect...' ] ]
+  <-- GET /dashboard
+GET /dashboard - 30ms
+  --> GET /dashboard 200 45ms 15.24kb
+  <-- GET /vendors/@coreui/icons/css/coreui-icons.min.css
+  <-- GET /vendors/flag-icon-css/css/flag-icon.min.css
+  <-- GET /vendors/font-awesome/css/font-awesome.min.css
+  <-- GET /vendors/simple-line-icons/css/simple-line-icons.css
+  <-- GET /css/style.css
+  <-- GET /vendors/jquery/js/jquery.min.js
+  --> GET /vendors/@coreui/icons/css/coreui-icons.min.css 200 11ms 4.58kb
+  --> GET /vendors/flag-icon-css/css/flag-icon.min.css 200 11ms 32.9kb
+  --> GET /vendors/simple-line-icons/css/simple-line-icons.css 200 11ms 12.65kb
+  --> GET /vendors/font-awesome/css/font-awesome.min.css 200 11ms 30.27kb
+  <-- GET /vendors/pace-progress/css/pace.min.css
+  --> GET /vendors/jquery/js/jquery.min.js 200 11ms 84.89kb
+  --> GET /css/style.css 200 13ms 279.01kb
+  --> GET /vendors/pace-progress/css/pace.min.css 200 1ms 1.69kb
+  <-- GET /js/config.js
+  <-- GET /js/common.js?1
+  --> GET /js/config.js 200 5ms 475b
+  --> GET /js/common.js?1 200 5ms 4.37kb
+  <-- GET /img/brand/logo.svg
+  --> GET /img/brand/logo.svg 200 2ms 4.29kb
+  <-- GET /img/brand/sygnet.svg
+  --> GET /img/brand/sygnet.svg 200 1ms 1.43kb
+  <-- GET /vendors/popper.js/js/popper.min.js
+  <-- GET /vendors/bootstrap/js/bootstrap.min.js
+  --> GET /vendors/popper.js/js/popper.min.js 200 1ms 20.05kb
+  --> GET /vendors/bootstrap/js/bootstrap.min.js 200 2ms 49.84kb
+  <-- GET /vendors/pace-progress/js/pace.min.js
+  <-- GET /vendors/perfect-scrollbar/js/perfect-scrollbar.min.js
+  --> GET /vendors/pace-progress/js/pace.min.js 200 2ms 12.21kb
+  --> GET /vendors/perfect-scrollbar/js/perfect-scrollbar.min.js 200 2ms 17.86kb
+  <-- GET /vendors/@coreui/coreui/js/coreui.min.js
+  <-- GET /vendors/oneroot/js/abiSecurityToken.js
+  --> GET /vendors/@coreui/coreui/js/coreui.min.js 200 3ms 22.93kb
+  --> GET /vendors/oneroot/js/abiSecurityToken.js 200 2ms 14.28kb
+  <-- GET /vendors/oneroot/js/abiSTGFactory.js
+  <-- GET /vendors/oneroot/js/abiSTO.js
+  <-- GET /vendors/oneroot/js/abiSTOFactory.js
+  <-- GET /vendors/oneroot/js/abiGP.js
+  <-- GET /vendors/oneroot/js/STGFactory.js
+  <-- GET /vendors/oneroot/js/abiRAC.js
+  --> GET /vendors/oneroot/js/abiSTGFactory.js 200 3ms 1.15kb
+  --> GET /vendors/oneroot/js/abiSTOFactory.js 200 3ms 988b
+  --> GET /vendors/oneroot/js/abiSTO.js 200 3ms 6.13kb
+  --> GET /vendors/oneroot/js/abiGP.js 200 3ms 4.69kb
+  --> GET /vendors/oneroot/js/STGFactory.js 200 3ms 3.14kb
+  --> GET /vendors/oneroot/js/abiRAC.js 200 4ms 2.75kb
+  <-- GET /vendors/oneroot/js/STOFactory.js
+  <-- GET /vendors/oneroot/js/SecurityToken.js
+  <-- GET /vendors/oneroot/js/GP.js
+  <-- GET /vendors/oneroot/js/STO.js
+  <-- GET /vendors/oneroot/js/RAC.js
+  <-- GET /vendors/oneroot/js/role.js
+  --> GET /vendors/oneroot/js/GP.js 200 3ms 3.84kb
+  --> GET /vendors/oneroot/js/STO.js 200 3ms 3.77kb
+  --> GET /vendors/oneroot/js/STOFactory.js 200 4ms 3.15kb
+  --> GET /vendors/oneroot/js/SecurityToken.js 200 3ms 5.55kb
+  --> GET /vendors/oneroot/js/RAC.js 200 4ms 4.04kb
+  --> GET /vendors/oneroot/js/role.js 200 3ms 371b
+  <-- GET /vendors/simple-line-icons/fonts/Simple-Line-Icons.woff2?v=2.4.0
+  --> GET /vendors/simple-line-icons/fonts/Simple-Line-Icons.woff2?v=2.4.0 200 1ms 29.36kb
+  <-- GET /favicon.ico
+  --> GET /favicon.ico 200 1ms 14.73kb
+  <-- GET /dashboard
+GET /dashboard - 3ms
+  --> GET /dashboard 200 3ms 15.24kb
+  <-- GET /vendors/@coreui/icons/css/coreui-icons.min.css
+  <-- GET /vendors/flag-icon-css/css/flag-icon.min.css
+  <-- GET /vendors/font-awesome/css/font-awesome.min.css
+  <-- GET /vendors/simple-line-icons/css/simple-line-icons.css
+  <-- GET /css/style.css
+  <-- GET /vendors/pace-progress/css/pace.min.css
+  --> GET /vendors/@coreui/icons/css/coreui-icons.min.css 200 6ms 4.58kb
+  --> GET /vendors/flag-icon-css/css/flag-icon.min.css 200 5ms 32.9kb
+  --> GET /vendors/font-awesome/css/font-awesome.min.css 200 6ms 30.27kb
+  --> GET /vendors/pace-progress/css/pace.min.css 200 4ms 1.69kb
+  --> GET /vendors/simple-line-icons/css/simple-line-icons.css 200 5ms 12.65kb
+  --> GET /css/style.css 200 10ms 279.01kb
+  <-- GET /vendors/jquery/js/jquery.min.js
+  <-- GET /js/config.js
+  <-- GET /js/common.js?1
+  --> GET /js/config.js 200 4ms 475b
+  --> GET /js/common.js?1 200 4ms 4.37kb
+  --> GET /vendors/jquery/js/jquery.min.js 200 5ms 84.89kb
+  <-- GET /img/brand/logo.svg
+  --> GET /img/brand/logo.svg 200 2ms 4.29kb
+  <-- GET /img/brand/sygnet.svg
+  --> GET /img/brand/sygnet.svg 200 4ms 1.43kb
+  <-- GET /vendors/popper.js/js/popper.min.js
+  --> GET /vendors/popper.js/js/popper.min.js 200 1ms 20.05kb
+  <-- GET /vendors/bootstrap/js/bootstrap.min.js
+  --> GET /vendors/bootstrap/js/bootstrap.min.js 200 1ms 49.84kb
+  <-- GET /vendors/pace-progress/js/pace.min.js
+  --> GET /vendors/pace-progress/js/pace.min.js 200 1ms 12.21kb
+  <-- GET /vendors/perfect-scrollbar/js/perfect-scrollbar.min.js
+  <-- GET /vendors/@coreui/coreui/js/coreui.min.js
+  --> GET /vendors/perfect-scrollbar/js/perfect-scrollbar.min.js 200 1ms 17.86kb
+  --> GET /vendors/@coreui/coreui/js/coreui.min.js 200 2ms 22.93kb
+  <-- GET /vendors/oneroot/js/abiSecurityToken.js
+  <-- GET /vendors/oneroot/js/abiSTGFactory.js
+  <-- GET /vendors/oneroot/js/abiSTO.js
+  <-- GET /vendors/oneroot/js/abiSTOFactory.js
+  <-- GET /vendors/oneroot/js/abiGP.js
+  <-- GET /vendors/oneroot/js/abiRAC.js
+  --> GET /vendors/oneroot/js/abiSecurityToken.js 200 4ms 14.28kb
+  --> GET /vendors/oneroot/js/abiSTGFactory.js 200 3ms 1.15kb
+  --> GET /vendors/oneroot/js/abiSTO.js 200 3ms 6.13kb
+  --> GET /vendors/oneroot/js/abiSTOFactory.js 200 4ms 988b
+  --> GET /vendors/oneroot/js/abiGP.js 200 3ms 4.69kb
+  --> GET /vendors/oneroot/js/abiRAC.js 200 3ms 2.75kb
+  <-- GET /vendors/oneroot/js/STGFactory.js
+  <-- GET /vendors/oneroot/js/STOFactory.js
+  <-- GET /vendors/oneroot/js/SecurityToken.js
+  <-- GET /vendors/oneroot/js/GP.js
+  <-- GET /vendors/oneroot/js/STO.js
+  <-- GET /vendors/oneroot/js/RAC.js
+  --> GET /vendors/oneroot/js/STGFactory.js 200 3ms 3.14kb
+  --> GET /vendors/oneroot/js/STOFactory.js 200 3ms 3.15kb
+  --> GET /vendors/oneroot/js/SecurityToken.js 200 4ms 5.55kb
+  --> GET /vendors/oneroot/js/GP.js 200 3ms 3.84kb
+  --> GET /vendors/oneroot/js/STO.js 200 4ms 3.77kb
+  --> GET /vendors/oneroot/js/RAC.js 200 3ms 4.04kb
+  <-- GET /vendors/oneroot/js/role.js
+  --> GET /vendors/oneroot/js/role.js 200 1ms 371b
+  <-- GET /vendors/simple-line-icons/fonts/Simple-Line-Icons.woff2?v=2.4.0
+  --> GET /vendors/simple-line-icons/fonts/Simple-Line-Icons.woff2?v=2.4.0 200 1ms 29.36kb
+  <-- GET /favicon.ico
+  --> GET /favicon.ico 200 1ms 14.73kb

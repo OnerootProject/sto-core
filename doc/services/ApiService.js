@@ -52,8 +52,8 @@ module.exports= class ApiService {
         return Message.fail();
     }
 
-    static getTransactionReceiptLogs(name, tx) {
-        let receipt = web3.eth.getTransactionReceipt(tx);
+    static async getTransactionReceiptLogs(name, tx) {
+        let receipt = await web3.eth.getTransactionReceipt(tx);
         let abi='';
         if(name=='SecurityToken') {
             abi = SecurityToken.abi;

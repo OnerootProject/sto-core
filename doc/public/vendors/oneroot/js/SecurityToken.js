@@ -115,7 +115,7 @@ var SecurityToken = function (web3, param) {
     };
 
 
-    factory.getPolicy = function (tranche) {
+    factory.getPolicy = function (tranche='') {
         let txData = {
             data: factory.instance.getPolicy.getData(tranche)
         };

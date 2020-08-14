@@ -156,8 +156,23 @@
     });
   }
 
+  async function getTrans() {
+    var tx = $('#tx').val();
+    var res = await getTransactionReceipt(tx);
+    // console.log(res);
+    res = decodeEventsForContract(abiGP, res.logs);
+    console.log(res);
+  }
+
   function runCode() {
     getTx();
+    // getTrans().then();
+
   }
+
+  $(document).ready(function() {
+    getWeb3();
+
+  });
 </script>
 <%- include footer %>
