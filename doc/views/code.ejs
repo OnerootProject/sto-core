@@ -21,7 +21,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col-sm-8">执行结果</div>
-                        <div class="col-sm-4"><button class="btn btn-block btn-primary" type="button" onclick="setResult('')">清除</button></div>
+                        <div class="col-sm-4"><button class="btn btn-block btn-primary" type="button" onclick="clearResult('')">清除</button></div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -35,12 +35,35 @@
 </div>
 
 <script type="text/javascript">
-    function setCode(_code) {
-        $('#code').val(_code);
+  function setCode(_code) {
+    $('#code').val(_code);
+  }
+
+  function clearResult(_code) {
+    $('#result').val('');
+  }
+
+  function setResult(_result) {
+    if(typeof _result == 'object') {
+      try {
+        _result = JSON.stringify(_result);
+      }catch(e) {
+        console.log('err:',e);
+      }
+    }
+    $('#result').val(_result);
+  }
+
+  function appendResult(_result) {
+    if(typeof _result == 'object') {
+      try {
+        _result = JSON.stringify(_result);
+      }catch(e) {
+        console.log('err:',e);
+      }
     }
 
-    function setResult(_result) {
-        $('#result').val(_result);
-    }
+    $('#result').append(_result+"\n");
+  }
 
 </script>

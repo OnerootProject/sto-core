@@ -9,4 +9,3 @@ config = {
         STO: '0xf844d13caae1bfe8c43655c1c1085c9271bce4d4'
     }
 };
-    

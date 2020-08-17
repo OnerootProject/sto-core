@@ -1,0 +1,76 @@
+<%- include header %>
+
+<div class="app-body">
+  <%- include menu %>
+  <main class="main">
+    <!-- Breadcrumb-->
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">基本</li>
+      <li class="breadcrumb-item active">监听合约事件</li>
+    </ol>
+
+    <div class="container-fluid">
+      <div class="animated fadeIn">
+        <div class="card">
+          <div class="card-header">eventWatch(options)</div>
+          <div class="card-body">
+            <div class="bd-example">
+              监听合约事件
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include code %>
+
+  </main>
+</div>
+<script type="text/javascript">
+  var _eshelper = new EventStorageHelper();
+  function runCode() {
+    // var filters = [];
+    for(var k in config.contract) {
+      var _options = {
+        fromBlock: 1,
+        toBlock:'latest',
+        address:config.contract[k]
+      }
+      // filters.push(_options);
+      console.log(_options);
+      eventWatch(_options);
+    }
+  }
+
+  function eventWatch(options) {
+    var filter = web3.eth.filter(options);
+
+    filter.watch(function (error, log) {
+      if(error) {
+        console.error('error:', error);
+      } else {
+        console.log(options.address+':', log);
+        // do something, i.e.
+        // var _tx = log.transactionHash
+        // 1. save
+        _eshelper.set(log);
+        // 2. notice user
+        appendResult(log);
+      }
+
+    });
+  }
+
+  // var Web3 = require('web3');
+  $(document).ready(function() {
+    var code = 'var _eshelper = new EventStorageHelper();\n'
+    code += runCode.toString()+"\n\n";
+    code += eventWatch.toString() + "\n";
+    setCode(code);
+
+  });
+
+
+
+</script>
+<%- include footer %>

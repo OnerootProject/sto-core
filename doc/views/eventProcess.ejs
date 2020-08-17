@@ -1,0 +1,63 @@
+<%- include header %>
+
+<div class="app-body">
+  <%- include menu %>
+  <main class="main">
+    <!-- Breadcrumb-->
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">基本</li>
+      <li class="breadcrumb-item active">处理事件信息</li>
+    </ol>
+
+    <div class="container-fluid">
+      <div class="animated fadeIn">
+        <div class="card">
+          <div class="card-header">eventProcess()</div>
+          <div class="card-body">
+            <div class="bd-example">
+              保持事件信息
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include code %>
+
+  </main>
+</div>
+<script type="text/javascript">
+  var _eshelper = null;
+  function callback(_data) {
+    console.log('callback:', _data);
+    appendResult(_data);
+    // run business code
+    // if ok
+    _eshelper.ok(_data);
+  }
+
+  function runCode() {
+    eventProcess();
+  }
+
+  function eventProcess() {
+    _eshelper = new EventStorageHelper();
+    _eshelper.callback = callback;
+    _eshelper.etime = 500;
+    _eshelper.process();
+  }
+
+  // var Web3 = require('web3');
+  $(document).ready(function() {
+    var code = "var _eshelper = null; \n"
+    code += callback.toString()+"\n\n";
+    code += runCode.toString()+"\n\n";
+    code += eventProcess.toString() + "\n";
+    setCode(code);
+
+  });
+
+
+
+</script>
+<%- include footer %>
