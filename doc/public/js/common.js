@@ -183,4 +183,71 @@ async function getBlock(block) {
     });
 }
 
+function decodeEventsForContract(abi, logs) {
+    if(!abi || !logs) {
+        console.error('decodeEventsForContract invalid param');
+        return logs;
+    }
+    var decoders = abi.filter(function (json) {
+        return json.type === 'event';
+    }).map(function(json) {
+        // note first and third params only required only by enocde and execute;
+        // so don't call those!
+        return new Web3EventCoder(json, null);
+    });
+
+    let result = logs.map(function (log) {
+        var decoder = decoders.find(function(decoder) {
+            return (decoder.signature() == log.topics[0].replace("0x",""));
+        })
+        if (decoder) {
+            // console.log('decoder:',decoder['_params']);
+            let types = {};
+            for(let i=0; i<decoder['_params'].length; i++) {
+                console.log('decoder _params:',decoder['_params'][i]);
+                types[decoder['_params'][i]['name']]= decoder['_params'][i]['type'];
+            }
+
+            log['types'] = types;
+            return decoder.decode(log);
+        } else {
+            console.log('un decoder:',log);
+            return log;
+        }
+    }).map(function (log) {
+        let abis = abi.find(function(json) {
+            return (json.type === 'event' && log.event === json.name);
+        });
+        // if (abis && abis.inputs) {
+        //     abis.inputs.forEach(function (param, i) {
+        //         if (param.type == 'bytes32') {
+        //             log.args[param.name] = utils.toAscii(log.args[param.name]);
+        //         }
+        //     })
+        // }
+        return log;
+    });
+
+    // Log.debug(result);
+    return result;
+}
+
+
+function jsonMerge(json1, json2) {
+    if(!json1 ) {
+        return json2;
+    }
+    if(!json2 ) {
+        return json1;
+    }
+
+    let res = {};
+    for(let k in json1) {
+        res[k] =json1[k];
+    }
+    for(let k in json2) {
+        res[k] =json2[k];
+    }
+    return res;
+}
 

@@ -53,12 +53,43 @@
         // do something, i.e.
         // var _tx = log.transactionHash
         // 1. save
-        _eshelper.set(log);
+        var _abi = getAbi(options.address);
+        var _logs = decodeEventsForContract(_abi, [log]);
+        console.log('decodeEventsForContract:',_logs);
+        _eshelper.set(_logs[0]);
+        appendResult(_logs[0]);
+
         // 2. notice user
-        appendResult(log);
+
       }
 
     });
+  }
+
+  function getAbi(address) {
+    var name = '';
+    for(var k in config.contract) {
+      if(address == config.contract[k]) {
+        name = k;
+        break;
+      }
+    }
+
+    var abi='';
+    if(name=='ST') {
+      abi = abiSecurityToken;
+    } else if(name=='GP') {
+      abi = abiGP;
+    } else if(name=='STO') {
+      abi = abiSTO;
+    } else if(name=='STOFactory') {
+      abi = abiSTOFactory;
+    } else if(name=='STGFactory') {
+      abi = abiSTGFactory;
+    } else if(name=='RAC') {
+      abi = abiRAC;
+    }
+    return abi;
   }
 
   // var Web3 = require('web3');

@@ -1,6 +1,6 @@
 var EventStorageHelper = function () {
     var factory = {
-        _PREFIX: 'EX-',
+        _PREFIX: 'STOEvent-',
         _handleEx: null,
         _isHandle: false,
         etime: 1000,
@@ -8,6 +8,7 @@ var EventStorageHelper = function () {
     };
 
     factory.set = function(_data) {
+        console.log('_data:',_data);
         var _bn = new BigNumber(_data.logIndex);
         var _k = _data.transactionHash+_bn.toString(16);
         localStorage.setItem(factory._PREFIX+_k, JSON.stringify(_data));
@@ -41,7 +42,7 @@ var EventStorageHelper = function () {
             if(localStorage.key(_i) === null) {
                 break;
             }
-            if(factory._PREFIX == localStorage.key(_i).substring(0,3)) {
+            if(factory._PREFIX == localStorage.key(_i).substring(0,factory._PREFIX.length)) {
                 // console.log(localStorage.key(_i), localStorage.getItem(localStorage.key(_i)));
                 var _val = localStorage.getItem(localStorage.key(_i));
                 try {

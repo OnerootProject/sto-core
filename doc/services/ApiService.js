@@ -54,20 +54,7 @@ module.exports= class ApiService {
 
     static async getTransactionReceiptLogs(name, tx) {
         let receipt = await web3.eth.getTransactionReceipt(tx);
-        let abi='';
-        if(name=='SecurityToken') {
-            abi = SecurityToken.abi;
-        } else if(name=='GeneralPolicy') {
-            abi =  GeneralPolicy.abi;
-        } else if(name=='DefaultSTO') {
-            abi =  DefaultSTO.abi;
-        } else if(name=='DefaultSTOFactory') {
-            abi =  DefaultSTOFactory.abi;
-        } else if(name=='STGFactory') {
-            abi =  STGFactory.abi;
-        } else if(name=='RAC') {
-            abi =  RAC.abi;
-        }
+        let abi= ApiService.getAbi(name);
 
         if(!abi) {
             return Message.fail('abi is null');
@@ -88,20 +75,7 @@ module.exports= class ApiService {
 
     static getTransaction(name, tx) {
         let receipt = web3.eth.getTransaction(tx);
-        let abi='';
-        if(name=='SecurityToken') {
-            abi = SecurityToken.abi;
-        } else if(name=='GeneralPolicy') {
-            abi =  GeneralPolicy.abi;
-        } else if(name=='DefaultSTO') {
-            abi =  DefaultSTO.abi;
-        } else if(name=='DefaultSTOFactory') {
-            abi =  DefaultSTOFactory.abi;
-        } else if(name=='STGFactory') {
-            abi =  STGFactory.abi;
-        } else if(name=='RAC') {
-            abi =  RAC.abi;
-        }
+        let abi= ApiService.getAbi(name);
 
         if(!abi) {
             return Message.fail('abi is null');
@@ -117,5 +91,23 @@ module.exports= class ApiService {
         }
         Log.error('fail to getTransaction:'+ tx, receipt);
         return Message.fail(receipt);
+    }
+
+    static getAbi(name) {
+        let abi='';
+        if(name=='ST') {
+            abi = SecurityToken.abi;
+        } else if(name=='GP') {
+            abi =  GeneralPolicy.abi;
+        } else if(name=='STO') {
+            abi =  DefaultSTO.abi;
+        } else if(name=='STOFactory') {
+            abi =  DefaultSTOFactory.abi;
+        } else if(name=='STGFactory') {
+            abi =  STGFactory.abi;
+        } else if(name=='RAC') {
+            abi =  RAC.abi;
+        }
+        return abi;
     }
 }

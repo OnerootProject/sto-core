@@ -31,7 +31,7 @@ class InputDataDecoder {
             data = data.slice(-256)
 
             if (data.length !== 256) {
-                throw new Error('fial')
+                throw new Error('fail')
             }
 
             if (data.indexOf(`0x`) !== 0) {

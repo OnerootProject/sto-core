@@ -27,7 +27,7 @@
   </main>
 </div>
 <script type="text/javascript">
-  var logIndex = new Date().getTime();
+  var logIndex = 1;
   function runCode() {
     var _data = {
       "address": "0xeecf6b02b0674136aa24df534ca2be5ad6af5f7e",
@@ -50,8 +50,10 @@
 
   function eventSave(_data) {
     var _eshelper = new EventStorageHelper();
-    _eshelper.set(_data);
-    appendResult(_data);
+    var _logs = decodeEventsForContract(abiGP, [_data]);
+    console.log('decodeEventsForContract:',_logs);
+    _eshelper.set(_logs[0]);
+    appendResult(_logs[0]);
   }
 
 

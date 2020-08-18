@@ -32,10 +32,10 @@
                   <div class="col-md-12">
                     <select class="form-control" id="contractName" name="contractName">
                       <option value="0">Please select合约</option>
-                      <option value="SecurityToken">SecurityToken</option>
-                      <option value="GeneralPolicy">GeneralPolicy</option>
-                      <option value="DefaultSTO">DefaultSTO</option>
-                      <option value="DefaultSTOFactory">DefaultSTOFactory</option>
+                      <option value="ST">ST</option>
+                      <option value="GP">GP</option>
+                      <option value="STO">STO</option>
+                      <option value="STOFactory">STOFactory</option>
                       <option value="STGFactory">STGFactory</option>
                       <option value="RAC">RAC</option>
                     </select>
@@ -145,6 +145,7 @@
     $.get("/api/getTransaction?name="+name+"&tx="+tx,function(res){
       if(res.code==0) {
         setResult1(JSON.stringify(res.data, ' ', 4));
+
         getBlock(res.data.blockHash).then(res=>{
           setResult2(JSON.stringify(res, ' ', 4));
         })
@@ -159,14 +160,25 @@
   async function getTrans() {
     var tx = $('#tx').val();
     var res = await getTransactionReceipt(tx);
-    // console.log(res);
+    console.log('getTransactionReceipt:', res);
     res = decodeEventsForContract(abiGP, res.logs);
-    console.log(res);
+    setResult(JSON.stringify(res, ' ', 4));
+
+    var res1 = await getTransaction(tx);
+    console.log('getTransaction:', res1);
+    var _decoder = new Web3InputCoder(abiGP, null);
+    res1.input = _decoder.decode(res1.input);
+    console.log('decodeFunctionForContract:', res1);
+    setResult1(JSON.stringify(res1, ' ', 4));
+
+    var res2 = await getBlock(res1.blockHash);
+    setResult2(JSON.stringify(res2, ' ', 4));
+
   }
 
   function runCode() {
-    getTx();
-    // getTrans().then();
+    // getTx();
+    getTrans().then();
 
   }
 
