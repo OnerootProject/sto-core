@@ -12,7 +12,7 @@
     <div class="container-fluid">
       <div class="animated fadeIn">
         <div class="card">
-          <div class="card-header">sign(_value)</div>
+          <div class="card-header">personalSign(_value)</div>
           <div class="card-body">
             <div class="bd-example">
               签名
@@ -29,11 +29,11 @@
 <script type="text/javascript">
 
   function runCode() {
-    sign('1543907687356').then();
+    personalSign('1543907687356').then();
   }
 
   function verifySign(account, msg, signature) {
-    $.post("/api/verifySign",{account:account, msg:msg, signature:signature},function(res){
+    $.post("/api/verifyPersonalSign",{account:account, msg:msg, signature:signature},function(res){
       var result = "account：" + account +"\n";
       result += "msg：" + msg + "\n";
       result += "signature：" + signature + "\n";
@@ -43,7 +43,7 @@
     });
   }
 
-  async function sign(msg) {
+  async function personalSign(msg) {
     var res = getWeb3Account();
     var account = res.data;
     var result = "账号：" + account +"\n";
@@ -54,7 +54,7 @@
     }
 
     try {
-      res = await ethSign(account, msg);
+      res = await ethPersonalSign(account, msg);
       console.log('res:', res);
       verifySign(account, msg, res);
     } catch (e) {
@@ -69,7 +69,7 @@
     var code = runCode.toString() + "\n\n";
     code += getWeb3Account.toString()+"\n";
     code += verifySign.toString() + "\n\n";
-    code += sign.toString() + "\n";
+    code += personalSign.toString() + "\n";
     setCode(code);
 
   });

@@ -158,22 +158,47 @@
   }
 
   async function getTrans() {
+    var name= $('#contractName').val();
     var tx = $('#tx').val();
     var res = await getTransactionReceipt(tx);
     console.log('getTransactionReceipt:', res);
-    res = decodeEventsForContract(abiGP, res.logs);
+    var abi = getAbi(name);
+    res.logs = decodeEventsForContract(abi, res.logs);
     setResult(JSON.stringify(res, ' ', 4));
 
     var res1 = await getTransaction(tx);
     console.log('getTransaction:', res1);
-    var _decoder = new Web3InputCoder(abiGP, null);
-    res1.input = _decoder.decode(res1.input);
+    var _decoder = new Web3InputCoder(abi, null);
+    res1.inputDecode = _decoder.decode(res1.input);
     console.log('decodeFunctionForContract:', res1);
     setResult1(JSON.stringify(res1, ' ', 4));
 
     var res2 = await getBlock(res1.blockHash);
     setResult2(JSON.stringify(res2, ' ', 4));
 
+  }
+
+  function getAbi(k){
+    var abi = null;
+    if(k == 'GP') {
+        abi = abiGP;
+    } else if(k == 'STO') {
+        abi = abiSTO;
+    } else if(k == 'ST') {
+        abi = abiSecurityToken;
+    } else if(k == 'STGFactory') {
+        abi = abiSTGFactory;
+    } else if(k == 'STOFactory') {
+        abi = abiSTOFactory;
+    } else if(k == 'RAC') {
+        abi = abiRAC;
+    } else if(k == 'PolicyRegistry') {
+        abi = abiPolicyRegistry;
+    } else {
+        console.error('unknown contract:', k);
+    }
+
+    return abi;
   }
 
   function runCode() {

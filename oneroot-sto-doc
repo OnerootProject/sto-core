@@ -1,8 +1,8 @@
 #!/bin/bash
 basepath=$(cd `dirname $0`; pwd)
 apppath=$basepath/doc
-pidfile="$apppath/runtime/oneroot-sto-doc.pid"
-logfile="$apppath/runtime/oneroot-sto-doc.log"
+pidfile="$basepath/runtime/oneroot-sto-doc.pid"
+logfile="$basepath/runtime/oneroot-sto-doc.log"
 
 usage()
 {

@@ -6,16 +6,16 @@
     <!-- Breadcrumb-->
     <ol class="breadcrumb">
       <li class="breadcrumb-item">基本</li>
-      <li class="breadcrumb-item active">监听合约事件</li>
+      <li class="breadcrumb-item active">处理上链hash</li>
     </ol>
 
     <div class="container-fluid">
       <div class="animated fadeIn">
         <div class="card">
-          <div class="card-header">eventWatch(web3, uid, abis)</div>
+          <div class="card-header">txProcess()</div>
           <div class="card-body">
             <div class="bd-example">
-              监听合约事件
+              处理上链hash
             </div>
           </div>
         </div>
@@ -27,39 +27,32 @@
   </main>
 </div>
 <script type="text/javascript">
-  function runCode() {
-    var abis = {
-      abiSecurityToken: abiSecurityToken,
-      abiGP: abiGP,
-      abiSTO: abiSTO,
-      abiSTOFactory: abiSTOFactory,
-      abiSTGFactory: abiSTGFactory,
-      abiRAC: abiRAC
-    }
-
-    var uid = 1;
-
-    eventWatch(web3, uid, abis);
-  }
-
+  var _txhelper = null;
   function callback(_data) {
     console.log('callback:', _data);
     appendResult(_data);
     // run business code
+    // if ok
+    _txhelper.processOK(_data);
   }
 
-  function eventWatch(web3, uid, abis) {
-    var _eshelper = new EventHelper(web3, uid, abis);
-    _eshelper.fromBlock = 0;
-    _eshelper.configContract = config.contract;
-    _eshelper.watchCallback = callback;
-    _eshelper.watch();
+  function runCode() {
+    txProcess(web3, 1);
+  }
+
+  function txProcess(web3, uid) {
+    _txhelper = new TxHelper(web3, uid);
+    _txhelper.processCallback = callback;
+    _txhelper.etime = 500;
+    _txhelper.process();
   }
 
   // var Web3 = require('web3');
   $(document).ready(function() {
-    var code = runCode.toString()+"\n\n";
-    code += eventWatch.toString() + "\n";
+    var code = "var _txhelper = null; \n"
+    code += callback.toString()+"\n\n";
+    code += runCode.toString()+"\n\n";
+    code += txProcess.toString() + "\n";
     setCode(code);
 
   });

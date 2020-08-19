@@ -4,12 +4,11 @@ var EventHelper = function (web3, uid='', abis={}, configContract=null) {
         _ContractHelper: new ContractHelper(uid),
         _handleEx: null,
         _isHandle: false,
-        etime: 5000,
+        etime: 1000,
         abis: abis,
         topics: null,
         configContract: configContract,
         fromBlock: 'latest',
-        toBlock: 'latest',
         processCallback: null,
         watchCallback: null
     };
@@ -19,7 +18,7 @@ var EventHelper = function (web3, uid='', abis={}, configContract=null) {
     };
 
     factory.saveEvent = function(_data) {
-        // console.log('_data:',_data);
+        console.log('_data:',_data);
         var _bn = new BigNumber(_data.logIndex);
         var _k = _data.transactionHash+_bn.toString(16);
         localStorage.setItem(factory._PREFIX+_k, JSON.stringify(_data));
@@ -34,14 +33,14 @@ var EventHelper = function (web3, uid='', abis={}, configContract=null) {
         }
         var _bn = new BigNumber(_data.logIndex);
         var _k = _data.transactionHash+_bn.toString(16);
-        // console.log('removeItem:', factory._PREFIX+_k);
+        console.log('removeItem:', factory._PREFIX+_k);
         localStorage.removeItem(factory._PREFIX+_k);
         factory._isHandle = false;
     };
 
     factory.process = function() {
-        // console.log('isHandle:', factory._isHandle);
-        // console.log('localStorage.length:', localStorage.length);
+        console.log('isHandle:', factory._isHandle);
+        console.log('localStorage.length:', localStorage.length);
         if(factory._isHandle) {
             return;
         }
@@ -71,79 +70,49 @@ var EventHelper = function (web3, uid='', abis={}, configContract=null) {
         setTimeout(factory.process, factory.etime);
     };
 
-    factory.watch = function(address='', name='') {
-        //watch specify
-        if(address && name) {
-            if(factory._ContractHelper.exists(address)) {
-                return;
-            }
-            factory._ContractHelper.set(address, name);
-            factory.watchContract(address, name);
-            return;
-        }
-
-        //watch storage
+    factory.watch = function() {
         var _contractList = factory._ContractHelper.list();
-        // console.log('_contractList:', _contractList);
+        console.log('_contractList:', _contractList);
         if(!_contractList || typeof _contractList != 'object') {
             return;
         }
 
         for (var addr in _contractList) {
-            // console.log(addr, _contractList[addr]);
-            factory.watchContract(addr, _contractList[addr]);
+            var _options = {
+                fromBlock: factory.fromBlock,
+                toBlock:'latest',
+                address: addr
+            };
+
+            var _abi = factory.getAbi(_contractList[addr]);
+            factory.watchContract(_abi, _options);
         }
+
     };
 
+    factory.watchContract = function(_abi, options) {
+        var filter = web3.eth.filter(options);
 
-    factory.watchContract = function(address, name) {
-        if(!address || !name) {
-            return;
-        }
-
-        var _abi = factory.getAbi(name);
-        if(!_abi)  {
-            console.error('invalid contract type:', address, name);
-            return;
-        }
-
-        // console.log('watch Contract:', address, name);
-
-        var _options = {
-            fromBlock: factory.fromBlock,
-            toBlock: factory.toBlock,
-            address: address
-        };
-
-
-        var filter = web3.eth.filter(_options);
         filter.watch(function (error, log) {
             if(error) {
                 console.error('error:', error);
             } else {
-                // console.log(options.address+':', log);
+                console.log(options.address+':', log);
                 // do something, i.e.
                 // var _tx = log.transactionHash
                 // 1. save
                 var _logs =  factory.decodeEventsForContract(_abi, [log]);
-                // console.log('decodeEventsForContract:',_logs);
-                if(_logs && _logs[0].hasOwnProperty('args')) {
-                    factory.saveContract(_logs[0]);
-                    factory.watchCallback(_logs[0]);
-                } else {
-                    console.error('fail to decodeEventsForContract,', log.transactionHash);
-                }
-
+                console.log('decodeEventsForContract:',_logs);
+                factory.saveEvent(_logs[0]);
+                factory.saveContract(_logs[0]);
+                factory.watchCallback(_logs[0]);
             }
 
         });
     };
 
     factory.getAbi = function(name) {
-        // console.log('name:', name);
-        if(!name) {
-            return;
-        }
+        console.log('name:', name);
         var abi='';
         if(name=='ST') {
             abi = factory.abis['abiSecurityToken'];
@@ -231,21 +200,13 @@ var EventHelper = function (web3, uid='', abis={}, configContract=null) {
                 log['types'] = types;
                 return decoder.decode(log);
             } else {
-                console.warn('un decoder:',log);
+                console.log('un decoder:',log);
                 return log;
             }
         }).map(function (log) {
-            var abis = abi.find(function(json) {
+            var _abis = abi.find(function(json) {
                 return (json.type === 'event' && log.event === json.name);
             });
-            if (abis && abis.inputs) {
-                abis.inputs.forEach(function (param, i) {
-                    // console.log('param.type:',param.type);
-                    if (param.type == 'bytes32') {
-                        log.args[param.name] = web3.toUtf8(log.args[param.name]);
-                    }
-                })
-            }
             return log;
         });
 

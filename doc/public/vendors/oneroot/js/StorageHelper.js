@@ -8,7 +8,6 @@ var StorageHelper = function (_prefix='') {
     };
 
     factory.set = function(_key, _data) {
-        console.log('_data:',_data);
         if(!_key || !_data) {
             return;
         }
@@ -50,7 +49,7 @@ var StorageHelper = function (_prefix='') {
     factory.removeMany = function(_keys=[]) {
         for(var _i=0; _i<localStorage.length; _i++) {
             if(localStorage.key(_i) === null || factory._PREFIX != localStorage.key(_i).substring(0,factory._PREFIX.length)) {
-                break;
+                continue;
             }
 
             if(_keys.indexOf(localStorage.key(_i).substring(factory._PREFIX.length))>-1) {
@@ -64,20 +63,23 @@ var StorageHelper = function (_prefix='') {
         if(!factory._PREFIX) {
             localStorage.clear();
         }
+        var _count = 0;
         for(var _i=0; _i<localStorage.length; _i++) {
-            if(localStorage.key(_i) === null || factory._PREFIX != localStorage.key(_i).substring(0,factory._PREFIX.length)) {
-                break;
+            if(factory._PREFIX != localStorage.key(_i).substring(0,factory._PREFIX.length)) {
+                continue;
             }
 
+            _count++;
             localStorage.removeItem(localStorage.key(_i));
         }
+        console.log('clear,count:', _count);
     };
 
     factory.list = function() {
         var _res = {};
         for(var _i=0; _i<localStorage.length; _i++) {
             if(localStorage.key(_i) === null || factory._PREFIX != localStorage.key(_i).substring(0,factory._PREFIX.length)) {
-                break;
+                continue;
             }
 
             var _val = localStorage.getItem(localStorage.key(_i));
@@ -89,8 +91,8 @@ var StorageHelper = function (_prefix='') {
                 }
             }
 
+            // _res[localStorage.key(_i).substring(factory._PREFIX.length)] = _val;
             _res[localStorage.key(_i)] = _val;
-
         }
         return _res;
     };
@@ -115,7 +117,7 @@ var StorageHelper = function (_prefix='') {
     };
 
     factory.exists = function(_key) {
-        return localStorage.hasOwnProperty(_key);
+        return localStorage.hasOwnProperty(factory._PREFIX+_key);
     };
 
 
@@ -123,6 +125,10 @@ var StorageHelper = function (_prefix='') {
 
 };
 
+// dont override global variable
+if (typeof window !== 'undefined' && typeof window.StorageHelper === 'undefined') {
+    window.StorageHelper = StorageHelper;
+}
 (function(exports){
 
     exports.StorageHelper = StorageHelper;

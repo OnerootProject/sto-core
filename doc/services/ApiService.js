@@ -52,6 +52,35 @@ module.exports= class ApiService {
         return Message.fail();
     }
 
+    static verifyPersonalSign(account, msg, signature) {
+        msg += '';
+        // console.debug('account:', account);
+        // console.debug('msg:', msg);
+        // console.debug('signature:', signature);
+
+        if(signature.toLowerCase().substring(0,2) == '0x') {
+            signature = signature.substring(2);
+        }
+        let r = new Buffer(signature.substring(0, 64), 'hex');
+        let s = new Buffer(signature.substring(64, 128), 'hex');
+        let v = new Buffer((parseInt(signature.substring(128, 130)) + 27).toString());
+
+        // console.debug('r:',r);
+        // console.debug('s:',s);
+        // console.debug('v:',v);
+
+        let sha3Mag = ethUtils.keccak256(msg);
+        console.debug('sha3Mag:', sha3Mag);
+        let pubKey=ethUtils.ecrecover(sha3Mag, v, r, s);
+        let pubAddr="0x"+ethUtils.publicToAddress(pubKey).toString("hex");
+        // console.debug('pubAddr:', pubAddr);
+        if(pubAddr.toLowerCase() == account.toLowerCase()){
+            return Message.success();
+        }
+
+        return Message.fail();
+    }
+
     static async getTransactionReceiptLogs(name, tx) {
         let receipt = await web3.eth.getTransactionReceipt(tx);
         let abi= ApiService.getAbi(name);

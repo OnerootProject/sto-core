@@ -12,7 +12,7 @@
     <div class="container-fluid">
       <div class="animated fadeIn">
         <div class="card">
-          <div class="card-header">eventProcess()</div>
+          <div class="card-header">eventProcess(web3, uid)</div>
           <div class="card-body">
             <div class="bd-example">
               保持事件信息
@@ -33,16 +33,16 @@
     appendResult(_data);
     // run business code
     // if ok
-    _eshelper.ok(_data);
+    _eshelper.processOK(_data);
   }
 
   function runCode() {
-    eventProcess();
+    eventProcess(web3, 1);
   }
 
-  function eventProcess() {
-    _eshelper = new EventStorageHelper();
-    _eshelper.callback = callback;
+  function eventProcess(web3, uid) {
+    _eshelper = new EventHelper(web3, uid);
+    _eshelper.processCallback = callback;
     _eshelper.etime = 500;
     _eshelper.process();
   }

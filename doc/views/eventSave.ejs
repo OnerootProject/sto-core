@@ -49,7 +49,7 @@
   }
 
   function eventSave(_data) {
-    var _eshelper = new EventStorageHelper();
+    var _eshelper = new EventHelper();
     var _logs = decodeEventsForContract(abiGP, [_data]);
     console.log('decodeEventsForContract:',_logs);
     _eshelper.set(_logs[0]);

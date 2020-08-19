@@ -1,0 +1,60 @@
+<%- include header %>
+
+<div class="app-body">
+  <%- include menu %>
+  <main class="main">
+    <!-- Breadcrumb-->
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">基本</li>
+      <li class="breadcrumb-item active">运行代码</li>
+    </ol>
+
+    <div class="container-fluid">
+      <div class="animated fadeIn">
+        <div class="card">
+          <div class="card-header">runCode()</div>
+          <div class="card-body">
+            <div class="bd-example">
+              运行代码
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <%- include code %>
+
+  </main>
+</div>
+<script type="text/javascript">
+  function runCode() {
+    var _code = $('#code').val();
+    console.log('code:', _code);
+    eval(evalCode);
+  }
+
+  function evalCode() {
+    test();
+  }
+
+  function test() {
+    var res = web3.padRight(web3.fromAscii('ethereum'),66);
+    setResult('fromAscii'+ res);
+    res = '0x657468657265756d000000000000000000000000000000000000000000000000';
+    setResult('hardcode:'+ res);
+    res = web3.toAscii(res);
+    setResult('toAscii'+ res);
+  }
+
+  // var Web3 = require('web3');
+  $(document).ready(function() {
+    var code = evalCode.toString()+"\n\n";
+    code += test.toString()+"\n\n";
+    setCode(code);
+
+  });
+
+
+
+</script>
+<%- include footer %>

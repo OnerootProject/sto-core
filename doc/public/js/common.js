@@ -56,13 +56,37 @@ async function getGasPrice() {
 async function ethSign(owner, value) {
     value += '';
     console.log('value:',value);
-    var _sha3Msg = web3.sha3(value);
-    console.log('_sha3Msg:',_sha3Msg);
+    // var _sha3Msg = web3.sha3(value);
+    var _sha3Msg = value;
+    // console.log('_sha3Msg:',_sha3Msg);
     return new Promise((resolve, reject) => {
         if(!web3) {
             reject(false);
         } else {
             web3.eth.sign(owner, _sha3Msg, (error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            });
+        }
+
+    });
+}
+
+
+async function ethPersonalSign(owner, value) {
+    value += '';
+    console.log('value:',value);
+    // var _sha3Msg = web3.sha3(value);
+    var _sha3Msg = web3.fromUtf8(value);
+    console.log('_sha3Msg:',_sha3Msg);
+    return new Promise((resolve, reject) => {
+        if(!web3) {
+            reject(false);
+        } else {
+            web3.personal.sign(_sha3Msg, owner, (error, result) => {
                 if (error) {
                     reject(error);
                 } else {
@@ -202,20 +226,25 @@ function decodeEventsForContract(abi, logs) {
         })
         if (decoder) {
             // console.log('decoder:',decoder['_params']);
-            let types = {};
-            for(let i=0; i<decoder['_params'].length; i++) {
+            var types = {};
+            for(var i=0; i<decoder['_params'].length; i++) {
                 console.log('decoder _params:',decoder['_params'][i]);
                 types[decoder['_params'][i]['name']]= decoder['_params'][i]['type'];
             }
 
             log['types'] = types;
-            return decoder.decode(log);
+            var _topics = log.topics;
+            var _data = log.data;
+            var res = decoder.decode(log);
+            res['topics'] = _topics;
+            res['data'] = _data;
+            return res;
         } else {
             console.log('un decoder:',log);
             return log;
         }
     }).map(function (log) {
-        let abis = abi.find(function(json) {
+        var abis = abi.find(function(json) {
             return (json.type === 'event' && log.event === json.name);
         });
         // if (abis && abis.inputs) {
@@ -241,11 +270,11 @@ function jsonMerge(json1, json2) {
         return json1;
     }
 
-    let res = {};
-    for(let k in json1) {
+    var res = {};
+    for(var k in json1) {
         res[k] =json1[k];
     }
-    for(let k in json2) {
+    for(var k in json2) {
         res[k] =json2[k];
     }
     return res;

@@ -2,7 +2,7 @@ var STGFactory = function (web3, param) {
     var factory = {
         web3 : web3,
         nonce: param['nonce'],
-        gasPrice: param['gasPrice']? web3.toWei(param['gasPrice']+'', "gwei") : web3.toWei("10", "gwei"),
+        gasPrice: param['gasPrice']? param['gasPrice'] : web3.toWei("5", "gwei"),
         gasLimit: 4890858,
         addr: param['address'],
         instance: web3.eth.contract(param['abi']).at(param['address']),
@@ -28,7 +28,6 @@ var STGFactory = function (web3, param) {
             gasPrice: web3.toHex(factory.gasPrice),
             to: factory.addr,
             from: factory.sender,
-            // 调用合约转账value这里留空
             value: '0x00',
             data: null
         };

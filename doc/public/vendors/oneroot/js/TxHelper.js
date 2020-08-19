@@ -1,21 +1,18 @@
 var TxHelper = function (web3, _prefix='') {
     var factory = new StorageHelper('STOTX'+_prefix+'-');
     factory._isHandle = false;
-    factory.etime = 30000;
+    factory.etime = 10000;
     factory.processCallback = null;
 
-    factory.setUid = function(uid) {
-        factory._PREFIX = 'STOTX'+uid+'-';
-    };
 
-    factory.processOK = function(_data) {
-        // console.log('processOK:', _data);
-        if(! _data) {
+    factory.processOK = function(_tx) {
+        console.log('processOK:', _tx);
+        if(! _tx) {
             factory._isHandle = false;
             return;
         }
 
-        factory.remove(_data.transactionHash);
+        factory.remove(_tx);
         factory._isHandle = false;
     };
 
@@ -37,8 +34,7 @@ var TxHelper = function (web3, _prefix='') {
             if(factory._PREFIX == localStorage.key(_i).substring(0,factory._PREFIX.length)) {
                 _tx = localStorage.key(_i).substring(factory._PREFIX.length);
                 factory._isHandle = true;
-                // console.log('watch tx:', _tx);
-                factory.getTransactionReceipt(_tx);
+                factory.processCallback(_tx);
                 break;
             }
 
@@ -48,27 +44,28 @@ var TxHelper = function (web3, _prefix='') {
     };
 
 
+    factory.watch = function() {
+        for(var _i=0; _i<localStorage.length; _i++) {
+            // console.log('watch:', localStorage.key(_i));
+            if(factory._PREFIX == localStorage.key(_i).substring(0,factory._PREFIX.length)) {
+                var _tx = localStorage.key(_i).substring(factory._PREFIX.length);
+                console.log('watch tx:', _tx);
+                factory.getTransactionReceipt(_tx);
+                break;
+            }
+        }
+
+        setTimeout(factory.watch, factory.etime);
+    };
+
     factory.getTransactionReceipt = function(tx) {
-        web3.eth.getTransactionReceipt(tx, function(error, result) {
+        web3.eth.getTransactionReceipt(tx, (error, result) => {
             if (error) {
                 //nothing
             } else {
-                // console.log('Receipt:', result);
-                if(result && result.hasOwnProperty('status')) {
-                    var _bn = new BigNumber(result.status);
-                    result.status = _bn.toNumber();
-                    let res = {
-                        transactionHash: result.transactionHash,
-                        status: result.status,
-                        from: result.from,
-                        to: result.to
-                    };
-
-                    factory.processCallback(res);
-                }
-
+                console.log('Receipt:', result);
+                factory.processOK(result);
             }
-            factory._isHandle = false;
         });
     };
 
