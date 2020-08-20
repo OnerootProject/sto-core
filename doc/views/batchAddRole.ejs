@@ -81,14 +81,17 @@
   // var Web3 = require('web3');
   $(document).ready(function() {
     _initRole();
+
     var code = runCode.toString() + "\n\n";
-    code += getWeb3Account.toString()+"\n";
-    code += batchAddRole.toString() + "\n";
+    code += batchAddRole.toString() + "\n\n";
+    code += "runCode();\n\n";
     setCode(code);
 
   });
 
   function _initRole() {
+    $('#operator').val(web3.eth.coinbase);
+
     for(var i=0;i<roles.length;i++) {
       $('#role').append("<option value='"+roles[i]+"'>"+roles[i]+"</option>");
     }

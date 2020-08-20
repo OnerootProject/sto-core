@@ -49,6 +49,7 @@
   $(document).ready(function() {
     var code = runCode.toString()+"\n\n";
     code += txSet.toString() + "\n";
+    code += "runCode();\n\n";
     setCode(code);
 
   });

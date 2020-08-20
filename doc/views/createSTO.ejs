@@ -79,8 +79,8 @@
 
   $(document).ready(function() {
     var code = runCode.toString() + "\n\n";
-    code +=  getWeb3Account.toString()+"\n";
-    code += createSTO.toString() + "\n";
+    code += createSTO.toString() + "\n\n";
+    code += "runCode();\n\n";
     setCode(code);
 
   });

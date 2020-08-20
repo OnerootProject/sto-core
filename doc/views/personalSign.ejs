@@ -39,6 +39,7 @@
       result += "signature：" + signature + "\n";
       result += "result.code：" + res.code + "\n";
       result += "result.msg：" + res.msg + "\n";
+      result += "result.data：" + res.data + "\n";
       setResult(result);
     });
   }
@@ -67,9 +68,9 @@
 
   $(document).ready(function() {
     var code = runCode.toString() + "\n\n";
-    code += getWeb3Account.toString()+"\n";
     code += verifySign.toString() + "\n\n";
-    code += personalSign.toString() + "\n";
+    code += personalSign.toString() + "\n\n";
+    code += "runCode();\n\n";
     setCode(code);
 
   });

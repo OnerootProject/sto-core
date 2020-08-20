@@ -47,9 +47,10 @@
 
   // var Web3 = require('web3');
   $(document).ready(function() {
-
-    var code = checkWeb3Plugin.toString() + "\n\n";
-    code += checkMetaMask.toString() + "\n";
+    var code = runCode.toString()+"\n\n";
+    code = checkWeb3Plugin.toString() + "\n\n";
+    code += checkMetaMask.toString() + "\n\n";
+    code += "runCode();\n\n";
     setCode(code);
     checkMetaMask();
 

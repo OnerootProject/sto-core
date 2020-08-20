@@ -27,7 +27,6 @@
   </main>
 </div>
 <script type="text/javascript">
-  var logIndex = 1;
   function runCode() {
     var _data = {
       "address": "0xeecf6b02b0674136aa24df534ca2be5ad6af5f7e",
@@ -39,12 +38,11 @@
       "timeStamp": 1545042495,
       "gasPrice": 10000000000,
       "gasUsed": 46997,
-      "logIndex": logIndex,
+      "logIndex": 2,
       "transactionHash": "0x8b4352037c528b4655fb975feb3d3d3d2aa217a4730ed33fe6d83c902cbce34c",
       "transactionIndex": 3
     };
 
-    logIndex++;
     eventSave(_data);
   }
 
@@ -52,7 +50,7 @@
     var _eshelper = new EventHelper();
     var _logs = decodeEventsForContract(abiGP, [_data]);
     console.log('decodeEventsForContract:',_logs);
-    _eshelper.set(_logs[0]);
+    _eshelper.saveEvent(_logs[0]);
     appendResult(_logs[0]);
   }
 
@@ -60,7 +58,8 @@
   // var Web3 = require('web3');
   $(document).ready(function() {
     var code = runCode.toString()+"\n\n";
-    code += eventSave.toString() + "\n";
+    code += eventSave.toString() + "\n\n";
+    code += "runCode();\n\n";
     setCode(code);
 
   });

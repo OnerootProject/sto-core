@@ -63,8 +63,9 @@
 
   // var Web3 = require('web3');
   $(document).ready(function() {
-    var code = getWeb3Account.toString()+"\n\n";
-    code += mintTranche.toString() + "\n";
+    var code = runCode.toString() + "\n\n";
+    code += mintTranche.toString() + "\n\n";
+    code += "runCode();\n\n";
     setCode(code);
 
   });

@@ -56,9 +56,8 @@ async function getGasPrice() {
 async function ethSign(owner, value) {
     value += '';
     console.log('value:',value);
-    // var _sha3Msg = web3.sha3(value);
-    var _sha3Msg = value;
-    // console.log('_sha3Msg:',_sha3Msg);
+    var _sha3Msg = web3.sha3(value);
+    console.log('_sha3Msg:',_sha3Msg);
     return new Promise((resolve, reject) => {
         if(!web3) {
             reject(false);
@@ -79,14 +78,13 @@ async function ethSign(owner, value) {
 async function ethPersonalSign(owner, value) {
     value += '';
     console.log('value:',value);
-    // var _sha3Msg = web3.sha3(value);
-    var _sha3Msg = web3.fromUtf8(value);
-    console.log('_sha3Msg:',_sha3Msg);
+    var _encodeMsg = web3.fromUtf8(value);
+    console.log('_encodeMsg:',_encodeMsg);
     return new Promise((resolve, reject) => {
         if(!web3) {
             reject(false);
         } else {
-            web3.personal.sign(_sha3Msg, owner, (error, result) => {
+            web3.personal.sign(_encodeMsg, owner, (error, result) => {
                 if (error) {
                     reject(error);
                 } else {
@@ -247,13 +245,14 @@ function decodeEventsForContract(abi, logs) {
         var abis = abi.find(function(json) {
             return (json.type === 'event' && log.event === json.name);
         });
-        // if (abis && abis.inputs) {
-        //     abis.inputs.forEach(function (param, i) {
-        //         if (param.type == 'bytes32') {
-        //             log.args[param.name] = utils.toAscii(log.args[param.name]);
-        //         }
-        //     })
-        // }
+        if (abis && abis.inputs) {
+            abis.inputs.forEach(function (param, i) {
+                // console.log('param.type:',param.type);
+                // if (param.type == 'bytes32') {
+                //     log.args[param.name] = web3.toAscii(log.args[param.name],66);
+                // }
+            })
+        }
         return log;
     });
 

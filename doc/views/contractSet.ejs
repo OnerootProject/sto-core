@@ -51,7 +51,8 @@
   // var Web3 = require('web3');
   $(document).ready(function() {
     var code = runCode.toString()+"\n\n";
-    code += contractSet.toString() + "\n";
+    code += contractSet.toString() + "\n\n";
+    code += "runCode();\n\n";
     setCode(code);
 
   });

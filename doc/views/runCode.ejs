@@ -27,32 +27,29 @@
   </main>
 </div>
 <script type="text/javascript">
-  function runCode() {
-    var _code = $('#code').val();
-    console.log('code:', _code);
-    eval(evalCode);
-  }
 
-  function evalCode() {
+  function runCode() {
     test();
   }
 
   function test() {
     var res = web3.padRight(web3.fromAscii('ethereum'),66);
-    setResult('fromAscii'+ res);
+    appendResult('fromAscii: '+ res);
     res = '0x657468657265756d000000000000000000000000000000000000000000000000';
-    setResult('hardcode:'+ res);
+    appendResult('hardcode: '+ res);
     res = web3.toAscii(res);
-    setResult('toAscii'+ res);
+    appendResult('toAscii: '+ res);
   }
 
   // var Web3 = require('web3');
   $(document).ready(function() {
-    var code = evalCode.toString()+"\n\n";
+    var code = runCode.toString()+"\n\n";
     code += test.toString()+"\n\n";
+    code += "runCode();\n\n";
     setCode(code);
 
   });
+
 
 
 

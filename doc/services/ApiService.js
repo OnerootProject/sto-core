@@ -49,7 +49,7 @@ module.exports= class ApiService {
             return Message.success();
         }
 
-        return Message.fail();
+        return Message.fail(pubAddr);
     }
 
     static verifyPersonalSign(account, msg, signature) {
@@ -69,11 +69,14 @@ module.exports= class ApiService {
         // console.debug('s:',s);
         // console.debug('v:',v);
 
-        let sha3Mag = ethUtils.keccak256(msg);
-        console.debug('sha3Mag:', sha3Mag);
-        let pubKey=ethUtils.ecrecover(sha3Mag, v, r, s);
+        // msg = web3.toHex(msg);
+        const msgBuffer = ethUtils.toBuffer(msg);
+        let sha3Msg = ethUtils.hashPersonalMessage(msgBuffer);
+        console.debug('sha3Msg:', sha3Msg);
+        let pubKey=ethUtils.ecrecover(sha3Msg, v, r, s);
+        console.debug('pubKey:', pubKey);
         let pubAddr="0x"+ethUtils.publicToAddress(pubKey).toString("hex");
-        // console.debug('pubAddr:', pubAddr);
+        console.debug('pubAddr:', pubAddr);
         if(pubAddr.toLowerCase() == account.toLowerCase()){
             return Message.success();
         }

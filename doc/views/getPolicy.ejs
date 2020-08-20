@@ -59,8 +59,8 @@
   // var Web3 = require('web3');
   $(document).ready(function() {
     var code = runCode.toString() + "\n\n";
-    code += getWeb3Account.toString()+"\n";
-    code += getPolicy.toString() + "\n";
+    code += getPolicy.toString() + "\n\n";
+    code += "runCode();\n\n";
     setCode(code);
 
   });

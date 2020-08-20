@@ -43,7 +43,7 @@
   function txProcess(web3, uid) {
     _txhelper = new TxHelper(web3, uid);
     _txhelper.processCallback = callback;
-    _txhelper.etime = 500;
+    _txhelper.etime = 3000;
     _txhelper.process();
   }
 
@@ -52,7 +52,8 @@
     var code = "var _txhelper = null; \n"
     code += callback.toString()+"\n\n";
     code += runCode.toString()+"\n\n";
-    code += txProcess.toString() + "\n";
+    code += txProcess.toString() + "\n\n";
+    code += "runCode();\n\n";
     setCode(code);
 
   });

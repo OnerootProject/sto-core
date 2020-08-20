@@ -91,8 +91,7 @@ var StorageHelper = function (_prefix='') {
                 }
             }
 
-            // _res[localStorage.key(_i).substring(factory._PREFIX.length)] = _val;
-            _res[localStorage.key(_i)] = _val;
+            _res[localStorage.key(_i).substring(factory._PREFIX.length)] = _val;
         }
         return _res;
     };

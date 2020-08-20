@@ -52,7 +52,8 @@
     var code = "var _eshelper = null; \n"
     code += callback.toString()+"\n\n";
     code += runCode.toString()+"\n\n";
-    code += eventProcess.toString() + "\n";
+    code += eventProcess.toString() + "\n\n";
+    code += "runCode();\n\n";
     setCode(code);
 
   });

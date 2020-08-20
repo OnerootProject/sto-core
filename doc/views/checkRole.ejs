@@ -82,8 +82,8 @@
   $(document).ready(function() {
     _initRole();
     var code = runCode.toString() + "\n\n";
-    code += getWeb3Account.toString()+"\n";
-    code += checkRole.toString() + "\n";
+    code += checkRole.toString() + "\n\n";
+    code += "runCode();\n\n";
     setCode(code);
 
   });

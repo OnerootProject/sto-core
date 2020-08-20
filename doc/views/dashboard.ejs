@@ -163,6 +163,9 @@
     var res = await getTransactionReceipt(tx);
     console.log('getTransactionReceipt:', res);
     var abi = getAbi(name);
+    if(!res) {
+      setResult('fail to getTransactionReceipt, tx:'+ tx);
+    }
     res.logs = decodeEventsForContract(abi, res.logs);
     setResult(JSON.stringify(res, ' ', 4));
 

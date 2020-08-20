@@ -5,8 +5,8 @@
             <div class="card">
                 <div class="card-header">
                     <div class="row">
-                        <div class="col-sm-8">代码</div>
-                        <div class="col-sm-4"><button class="btn btn-block btn-primary" type="button" onclick="runCode()">运行</button></div>
+                      <div class="col-sm-8">代码</div>
+                      <div class="col-sm-4"><button class="btn btn-block btn-primary" type="button" onclick="evalCode()">运行</button></div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -21,7 +21,7 @@
                 <div class="card-header">
                     <div class="row">
                         <div class="col-sm-8">执行结果</div>
-                        <div class="col-sm-4"><button class="btn btn-block btn-primary" type="button" onclick="clearResult('')">清除</button></div>
+                        <div class="col-sm-4"><button class="btn btn-block btn-primary" type="button" onclick="clearResult()">清除</button></div>
                     </div>
                 </div>
                 <div class="card-body">
@@ -39,8 +39,8 @@
     $('#code').val(_code);
   }
 
-  function clearResult(_code) {
-    $('#result').val('');
+  function clearResult() {
+    $('#result').empty();
   }
 
   function setResult(_result) {
@@ -51,7 +51,8 @@
         console.log('err:',e);
       }
     }
-    $('#result').val(_result);
+    $('#result').empty();
+    $('#result').append(_result);
   }
 
   function appendResult(_result) {
@@ -63,7 +64,14 @@
       }
     }
 
-    $('#result').append(_result+"\n\n");
+    var textarea = $('#result').append(_result+"\n\n");
+    textarea.scrollTop(textarea[0].scrollHeight - textarea.height());
+  }
+
+  function evalCode() {
+    var code = $('#code').val();
+    console.log(code);
+    eval(code);
   }
 
 </script>

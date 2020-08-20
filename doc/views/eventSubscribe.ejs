@@ -27,7 +27,6 @@
   </main>
 </div>
 <script type="text/javascript">
-  var _eshelper = new EventHelper();
   function runCode() {
     var addresses = [];
     for(var k in config.contract) {
@@ -38,10 +37,13 @@
       address:addresses
     }
     console.log(options);
+    alert('请用时间监听方式')
+    return;
     eventSubscribe(options);
   }
 
   function eventSubscribe(options) {
+    var _eshelper = new EventHelper();
     var  _wsServer = 'wss://ropsten.infura.io/ws/v3/4e987044d78c44319523b16c7bf0412c';
     var _eth = new Web3Eth(_wsServer);
     var subscription = _eth.subscribe('logs', options, function(error, result){
@@ -51,7 +53,7 @@
     })
     .on("data", function(log){
       console.log('data:', log);
-      _eshelper.set(log);
+      _eshelper.saveEvent(log);
       appendResult(log);
     })
     .on("changed", function(log){
@@ -62,7 +64,8 @@
   // var Web3 = require('web3');
   $(document).ready(function() {
     var code = runCode.toString()+"\n\n";
-    code += eventSubscribe.toString() + "\n";
+    code += eventSubscribe.toString() + "\n\n";
+    code += "runCode();\n\n";
     setCode(code);
 
   });

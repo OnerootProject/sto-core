@@ -50,7 +50,8 @@
   $(document).ready(function() {
 
     var code = runCode.toString() + "\n\n";
-    code += checkNetwork.toString() + "\n";
+    code += checkNetwork.toString() + "\n\n";
+    code += "runCode();\n\n";
     setCode(code);
   });
 
