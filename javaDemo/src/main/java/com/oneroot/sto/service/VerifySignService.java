@@ -8,7 +8,6 @@ import org.ethereum.crypto.HashUtil;
 import java.math.BigInteger;
 import org.ethereum.crypto.ECKey.ECDSASignature;
 import org.spongycastle.util.encoders.Hex;
-
 import java.security.SignatureException;
 
 
@@ -18,14 +17,51 @@ public class VerifySignService {
 
     public boolean verify(String account, String msg, String signature) {
         boolean rc = false;
-        if("0x".equalsIgnoreCase(signature.substring(0,2))) {
-            signature = signature.substring(2);
+        account = this.getAccount(account);
+        ECDSASignature sig = this.getSign(signature);
+        byte[] sha3Msg = this.getHashMsg(msg);
+
+        try {
+            ECKey key = ECKey.signatureToKey(sha3Msg, sig.toBase64());
+            String address = Hex.toHexString(key.getAddress());
+            log.debug("Signature public key: " + Hex.toHexString(key.getPubKey()));
+            log.debug("Sender is: " + address);
+            rc = key.verify(sha3Msg, sig);
+            if(!account.equalsIgnoreCase(address)) {
+                rc = false;
+            }
+        } catch (SignatureException e) {
+            log.error(e.getMessage());
         }
 
+        log.debug("rc:"+rc);
+        return rc;
+    }
+
+
+    public boolean verifyPersonal(String account, String msg, String signature) {
+        String message = "\u0019Ethereum Signed Message:\n" + msg.length() + msg;
+        return verify(account, message, signature);
+
+    }
+
+    private String getAccount(String account) {
         if("0x".equalsIgnoreCase(account.substring(0,2))) {
             account = account.substring(2);
         }
+        return account;
+    }
 
+    private byte[] getHashMsg(String msg) {
+        byte[] rawtx = msg.getBytes();
+        byte[] sha3Msg = HashUtil.sha3(rawtx);
+        return sha3Msg;
+    }
+
+    private ECDSASignature getSign(String signature) {
+        if("0x".equalsIgnoreCase(signature.substring(0,2))) {
+            signature = signature.substring(2);
+        }
 
         String _r = signature.substring(0, 64);
         String _s = signature.substring(64, 128);
@@ -36,21 +72,6 @@ public class VerifySignService {
         BigInteger v = new BigInteger(_v, 16);
 
         ECDSASignature sig = ECDSASignature.fromComponents(r.toByteArray(), s.toByteArray(), v.byteValue());
-        byte[] rawtx = msg.getBytes();
-        try {
-            ECKey key = ECKey.signatureToKey(HashUtil.sha3(rawtx), sig.toBase64());
-            String address = Hex.toHexString(key.getAddress());
-            log.debug("Signature public key: " + Hex.toHexString(key.getPubKey()));
-            log.debug("Sender is: " + address);
-            rc = key.verify(HashUtil.sha3(rawtx), sig);
-            if(!account.equalsIgnoreCase(address)) {
-                rc = false;
-            }
-        } catch (SignatureException e) {
-            log.error(e.getMessage());
-        }
-
-        log.debug("rc:"+rc);
-        return rc;
+        return sig;
     }
 }

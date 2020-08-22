@@ -11,6 +11,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -39,12 +40,29 @@ public class HomeController {
         return "home";
     }
 
+    @CrossOrigin
     @RequestMapping("/verifySign")
     @ResponseBody
     public Message verifySign(String account, String msg, String signature) {
         Message res = new Message();
 
         if(verifySignService.verify(account,msg,signature)) {
+            res.success();
+        } else {
+            res.failure();
+        }
+
+        return res;
+    }
+
+
+    @CrossOrigin
+    @RequestMapping("/verifyPersonalSign")
+    @ResponseBody
+    public Message verifyPersonalSign(String account, String msg, String signature) {
+        Message res = new Message();
+
+        if(verifySignService.verifyPersonal(account,msg,signature)) {
             res.success();
         } else {
             res.failure();

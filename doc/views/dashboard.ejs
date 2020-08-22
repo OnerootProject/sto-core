@@ -171,8 +171,7 @@
 
     var res1 = await getTransaction(tx);
     console.log('getTransaction:', res1);
-    var _decoder = new Web3InputCoder(abi, null);
-    res1.inputDecode = _decoder.decode(res1.input);
+    res1.inputDecode = InputDataDecoder(abi, res1.input);
     console.log('decodeFunctionForContract:', res1);
     setResult1(JSON.stringify(res1, ' ', 4));
 

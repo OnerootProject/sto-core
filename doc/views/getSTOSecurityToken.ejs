@@ -46,7 +46,7 @@
       var contract = {address: sto, abi: abiSTO};
       var sto = new STO(web3, contract);
       res  = await sto.securityToken();
-      result += "securityToken：" + res + "\n";
+      result += "result：" + res + "\n";
     } catch (e) {
       result += "error：" + e + "\n";
     }

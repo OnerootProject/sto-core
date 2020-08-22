@@ -248,9 +248,9 @@ function decodeEventsForContract(abi, logs) {
         if (abis && abis.inputs) {
             abis.inputs.forEach(function (param, i) {
                 // console.log('param.type:',param.type);
-                // if (param.type == 'bytes32') {
-                //     log.args[param.name] = web3.toAscii(log.args[param.name],66);
-                // }
+                if (param.type == 'bytes32') {
+                    log.args[param.name] = web3.toUtf8(log.args[param.name]);
+                }
             })
         }
         return log;
@@ -260,6 +260,11 @@ function decodeEventsForContract(abi, logs) {
     return result;
 }
 
+function InputDataDecoder(abi, input) {
+    var _decoder = new Web3InputCoder(abi, null);
+    let res = _decoder.decode(input);
+    return res;
+}
 
 function jsonMerge(json1, json2) {
     if(!json1 ) {

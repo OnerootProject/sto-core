@@ -72,13 +72,13 @@ module.exports= class ApiService {
         // msg = web3.toHex(msg);
         const msgBuffer = ethUtils.toBuffer(msg);
         let sha3Msg = ethUtils.hashPersonalMessage(msgBuffer);
-        console.debug('sha3Msg:', sha3Msg);
+        // console.debug('sha3Msg:', sha3Msg);
         let pubKey=ethUtils.ecrecover(sha3Msg, v, r, s);
-        console.debug('pubKey:', pubKey);
+        // console.debug('pubKey:', pubKey);
         let pubAddr="0x"+ethUtils.publicToAddress(pubKey).toString("hex");
-        console.debug('pubAddr:', pubAddr);
+        // console.debug('pubAddr:', pubAddr);
         if(pubAddr.toLowerCase() == account.toLowerCase()){
-            return Message.success();
+            return Message.success(pubAddr);
         }
 
         return Message.fail();

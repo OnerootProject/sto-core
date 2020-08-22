@@ -125,6 +125,14 @@ var GP = function (web3, param) {
         return factory.sendTx(txData);
     };
 
+    factory.getPolicyDetails = function(_investor, _tranche='') {
+        let txData = {
+            data: factory.instance.getPolicyDetails.getData(_investor, _tranche)
+        };
+
+        return factory.callTx(txData);
+    };
+
 
     return factory;
 

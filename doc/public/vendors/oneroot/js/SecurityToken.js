@@ -96,6 +96,55 @@ var SecurityToken = function (web3, param) {
         });
     };
 
+    factory.symbol = function () {
+        let txData = {
+            data: factory.instance.symbol.getData()
+        };
+        return factory.callTx(txData);
+    };
+
+    factory.name = function () {
+        let txData = {
+            data: factory.instance.name.getData()
+        };
+        return factory.callTx(txData);
+    };
+
+    factory.totalSupply = function () {
+        let txData = {
+            data: factory.instance.totalSupply.getData()
+        };
+        return factory.callTx(txData);
+    };
+
+    factory.granularity = function () {
+        let txData = {
+            data: factory.instance.granularity.getData()
+        };
+        return factory.callTx(txData);
+    };
+
+    factory.decimals = function () {
+        let txData = {
+            data: factory.instance.decimals.getData()
+        };
+        return factory.callTx(txData);
+    };
+
+    factory.issuer = function () {
+        let txData = {
+            data: factory.instance.issuer.getData()
+        };
+        return factory.callTx(txData);
+    };
+
+    factory.getTrancheTotalSupply = function (tranche) {
+        let txData = {
+            data: factory.instance.getTrancheTotalSupply.getData(tranche)
+        };
+        return factory.callTx(txData);
+    };
+
     factory.balanceOf = function (owner) {
         let txData = {
             data: factory.instance.balanceOf.getData(owner)

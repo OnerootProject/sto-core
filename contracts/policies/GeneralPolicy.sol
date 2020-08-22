@@ -203,4 +203,19 @@ contract GeneralPolicy is DataType {
         return false;
     }
 
+    /**
+    * @notice Return the Policy details
+    */
+    function getPolicyDetails(address _investor, bytes32 _tranche) public view returns(uint256, uint256, uint256, uint256, uint256, bool) {
+        return (
+        maxHolderCount[_tranche],
+        maxHolderPercentage[_tranche],
+        whitelist[_investor][_tranche].fromTime,
+        whitelist[_investor][_tranche].toTime,
+        whitelist[_investor][_tranche].expiryTime,
+        whitelist[_investor][_tranche].canTransfer
+        );
+    }
+
+
 }

@@ -35,13 +35,13 @@ module.exports = function EventsDataDecoder(abi, logs) {
         let abis = abi.find(function(json) {
             return (json.type === 'event' && log.event === json.name);
         });
-        // if (abis && abis.inputs) {
-        //     abis.inputs.forEach(function (param, i) {
-        //         if (param.type == 'bytes32') {
-        //             log.args[param.name] = utils.toAscii(log.args[param.name]);
-        //         }
-        //     })
-        // }
+        if (abis && abis.inputs) {
+            abis.inputs.forEach(function (param, i) {
+                if (param.type == 'bytes32') {
+                    log.args[param.name] = utils.toUtf8(log.args[param.name]);
+                }
+            })
+        }
         return log;
     });
 
