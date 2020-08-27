@@ -1,0 +1,97 @@
+{
+  "contractName": "Versionable",
+  "abi": [],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603580601d6000396000f3006080604052600080fd00a165627a7a723058202868f46b8ab4e2c0c64b2c8de3e13e5111b8dcb48a77b4213ce2afd067ed1e6d0029",
+  "deployedBytecode": "0x6080604052600080fd00a165627a7a723058202868f46b8ab4e2c0c64b2c8de3e13e5111b8dcb48a77b4213ce2afd067ed1e6d0029",
+  "sourceMap": "105:27:9:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;105:27:9;;;;;;;",
+  "deployedSourceMap": "105:27:9:-;;;;;",
+  "source": "pragma solidity ^0.4.24;\n\n/**\n * @title Utility contract to allow check version of certain functions\n */\ncontract Versionable {\n\n\n\n}\n",
+  "sourcePath": "/Users/tercel/Workspace/oneroot-sto/contracts/modules/Versionable.sol",
+  "ast": {
+    "absolutePath": "/Users/tercel/Workspace/oneroot-sto/contracts/modules/Versionable.sol",
+    "exportedSymbols": {
+      "Versionable": [
+        2714
+      ]
+    },
+    "id": 2715,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2713,
+        "literals": [
+          "solidity",
+          "^",
+          "0.4",
+          ".24"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:9"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": "@title Utility contract to allow check version of certain functions",
+        "fullyImplemented": true,
+        "id": 2714,
+        "linearizedBaseContracts": [
+          2714
+        ],
+        "name": "Versionable",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 2715,
+        "src": "105:27:9"
+      }
+    ],
+    "src": "0:133:9"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/tercel/Workspace/oneroot-sto/contracts/modules/Versionable.sol",
+    "exportedSymbols": {
+      "Versionable": [
+        2714
+      ]
+    },
+    "id": 2715,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 2713,
+        "literals": [
+          "solidity",
+          "^",
+          "0.4",
+          ".24"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:9"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": "@title Utility contract to allow check version of certain functions",
+        "fullyImplemented": true,
+        "id": 2714,
+        "linearizedBaseContracts": [
+          2714
+        ],
+        "name": "Versionable",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 2715,
+        "src": "105:27:9"
+      }
+    ],
+    "src": "0:133:9"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.24+commit.e67f0147.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "2.0.1",
+  "updatedAt": "2019-01-08T11:19:28.830Z"
+}

@@ -1,0 +1,51 @@
+<%- include header %>
+
+<div class="app-body">
+  <%- include menu %>
+  <main class="main">
+    <!-- Breadcrumb-->
+    <ol class="breadcrumb">
+      <li class="breadcrumb-item">简介</li>
+    </ol>
+
+    <div class="container-fluid">
+      <div class="animated fadeIn">
+        <div class="card">
+          <div class="card-header">oneroot STO 介绍</div>
+          <div class="card-body">
+            <div class="bd-example">
+              STO 接口文档
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container-fluid">
+      <div class="animated fadeIn">
+        <div class="card">
+          <div class="card-header">测试合约地址</div>
+          <div class="card-body">
+            <div class="bd-example" id="contracts">
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script type="text/javascript">
+// var Web3 = require('web3');
+$(document).ready(function() {
+  var contracts = '';
+  for(var k in config.contract) {
+    contracts+='<li>'+k+' : '+config.contract[k]+'</li>';
+  }
+  $('#contracts').html(contracts);
+});
+
+</script>
+
+<%- include footer %>

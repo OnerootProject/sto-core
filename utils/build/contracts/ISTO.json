@@ -1,0 +1,248 @@
+{
+  "contractName": "ISTO",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "getTokensSold",
+      "outputs": [
+        {
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity ^0.4.24;\n\nimport \"../libraries/SafeMath.sol\";\n\n/**\n * @title Interface to be implemented by all STO modules\n */\ncontract ISTO  {\n\n\n\n    /**\n     * @notice Returns the total no. of tokens sold\n     */\n    function getTokensSold() public view returns (uint256);\n\n}\n",
+  "sourcePath": "/Users/tercel/Workspace/oneroot-sto/contracts/interfaces/ISTO.sol",
+  "ast": {
+    "absolutePath": "/Users/tercel/Workspace/oneroot-sto/contracts/interfaces/ISTO.sol",
+    "exportedSymbols": {
+      "ISTO": [
+        3212
+      ]
+    },
+    "id": 3213,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3205,
+        "literals": [
+          "solidity",
+          "^",
+          "0.4",
+          ".24"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:12"
+      },
+      {
+        "absolutePath": "/Users/tercel/Workspace/oneroot-sto/contracts/libraries/SafeMath.sol",
+        "file": "../libraries/SafeMath.sol",
+        "id": 3206,
+        "nodeType": "ImportDirective",
+        "scope": 3213,
+        "sourceUnit": 3728,
+        "src": "26:35:12",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": "@title Interface to be implemented by all STO modules",
+        "fullyImplemented": false,
+        "id": 3212,
+        "linearizedBaseContracts": [
+          3212
+        ],
+        "name": "ISTO",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@notice Returns the total no. of tokens sold",
+            "id": 3211,
+            "implemented": false,
+            "isConstructor": false,
+            "isDeclaredConst": true,
+            "modifiers": [],
+            "name": "getTokensSold",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3207,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "242:2:12"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 3210,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3209,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3211,
+                  "src": "266:7:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3208,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "266:7:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "265:9:12"
+            },
+            "scope": 3212,
+            "src": "220:55:12",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 3213,
+        "src": "128:150:12"
+      }
+    ],
+    "src": "0:279:12"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/tercel/Workspace/oneroot-sto/contracts/interfaces/ISTO.sol",
+    "exportedSymbols": {
+      "ISTO": [
+        3212
+      ]
+    },
+    "id": 3213,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 3205,
+        "literals": [
+          "solidity",
+          "^",
+          "0.4",
+          ".24"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:12"
+      },
+      {
+        "absolutePath": "/Users/tercel/Workspace/oneroot-sto/contracts/libraries/SafeMath.sol",
+        "file": "../libraries/SafeMath.sol",
+        "id": 3206,
+        "nodeType": "ImportDirective",
+        "scope": 3213,
+        "sourceUnit": 3728,
+        "src": "26:35:12",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "contract",
+        "documentation": "@title Interface to be implemented by all STO modules",
+        "fullyImplemented": false,
+        "id": 3212,
+        "linearizedBaseContracts": [
+          3212
+        ],
+        "name": "ISTO",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@notice Returns the total no. of tokens sold",
+            "id": 3211,
+            "implemented": false,
+            "isConstructor": false,
+            "isDeclaredConst": true,
+            "modifiers": [],
+            "name": "getTokensSold",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 3207,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "242:2:12"
+            },
+            "payable": false,
+            "returnParameters": {
+              "id": 3210,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 3209,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 3211,
+                  "src": "266:7:12",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 3208,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "266:7:12",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "265:9:12"
+            },
+            "scope": 3212,
+            "src": "220:55:12",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 3213,
+        "src": "128:150:12"
+      }
+    ],
+    "src": "0:279:12"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.4.24+commit.e67f0147.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "2.0.1",
+  "updatedAt": "2018-12-12T03:51:29.306Z"
+}
