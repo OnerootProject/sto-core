@@ -1,6 +1,7 @@
 pragma solidity ^0.4.24;
 
 import "./SecurityToken.sol";
+import "./policies/GeneralPolicy.sol";
 import "./interfaces/ICheckRAC.sol";
 import "./modules/DataType.sol";
 
@@ -28,7 +29,7 @@ contract SecurityTokenFactory is DataType {
     modifier onlyRole(string _action)
     {
         require(racRegistry != address(0), "RAC does not Register");
-        require(ICheckRAC(racRegistry).check(msg.sender, stringToBytes32(_action)), "Permission deny");
+        require(ICheckRAC(racRegistry).checkRole(msg.sender, stringToBytes32(_action)), "Permission deny");
         _;
     }
 
@@ -41,16 +42,14 @@ contract SecurityTokenFactory is DataType {
         string _name,
         string _symbol,
         uint8 _decimals,
-        uint256 _granularity,
-        address _racRegistry
+        uint256 _granularity
     ) external onlyRole('createST') returns (address) {
         address newAddress = new SecurityToken(
             _issuer,
             _name,
             _symbol,
             _decimals,
-            _granularity,
-            _racRegistry
+            _granularity
         );
 
         SecurityToken(newAddress).changePolicyRegistry(policyRegistry);

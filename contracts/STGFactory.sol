@@ -12,15 +12,17 @@ import "./modules/DataType.sol";
 contract STGFactory is DataType {
 
     address public policyRegistry;
+    address public stoFactory;
     address public racRegistry;
 
     event CreateSTG(address indexed _securityToken, string _symbol, address indexed _policy);
 
     // Constructor
-    constructor (address _policyRegistry, address _racRegistry) public
+    constructor (address _policyRegistry, address _racRegistry, address _stoFactory) public
     {
         policyRegistry = _policyRegistry;
         racRegistry = _racRegistry;
+        stoFactory = _stoFactory;
     }
 
     /**
@@ -30,7 +32,7 @@ contract STGFactory is DataType {
     modifier onlyRole(string _action)
     {
         require(racRegistry != address(0), "RAC does not Register");
-        require(ICheckRAC(racRegistry).check(msg.sender, stringToBytes32(_action)), "Permission deny");
+        require(ICheckRAC(racRegistry).checkRole(msg.sender, stringToBytes32(_action)), "Permission deny");
         _;
     }
 
@@ -44,19 +46,21 @@ contract STGFactory is DataType {
         string _symbol,
         uint8 _decimals,
         uint256 _granularity
-    ) external onlyRole('createST') returns (address) {
+    ) external onlyRole("createST") returns (address) {
         address stAddress = new SecurityToken(
             _issuer,
             _name,
             _symbol,
             _decimals,
-            _granularity,
-            racRegistry
+            _granularity
         );
 
-        address policyAddress = new GeneralPolicy(stAddress);
+        SecurityToken(stAddress).addRole(stoFactory, stringToBytes32("manageRole"));
         SecurityToken(stAddress).changePolicyRegistry(policyRegistry);
+
+        address policyAddress = new GeneralPolicy(stAddress);
         SecurityToken(stAddress).registryPolicy(stringToBytes32(""), policyAddress);
+
         emit CreateSTG(stAddress, _symbol, policyAddress);
         return stAddress;
     }

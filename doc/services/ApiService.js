@@ -4,12 +4,12 @@ var Web3 = require("web3");
 var Log = require('../../utils/LogConsole')
 var Web3Utils = require('../../utils/Web3Utils')
 var config = require('../config')
-var SecurityToken = require('../../build/contracts/SecurityToken.json')
-var GeneralPolicy = require('../../build/contracts/GeneralPolicy.json')
-var DefaultSTO = require('../../build/contracts/DefaultSTO.json')
-var DefaultSTOFactory = require('../../build/contracts/DefaultSTOFactory.json')
-var STGFactory = require('../../build/contracts/STGFactory.json')
-var RAC = require('../../build/contracts/RAC.json')
+var {abiSecurityToken} = require('../public/vendors/oneroot/js/abiSecurityToken')
+var {abiGP} = require('../public/vendors/oneroot/js/abiGP')
+var {abiSTO} = require('../public/vendors/oneroot/js/abiSTO')
+var {abiSTOFactory} = require('../public/vendors/oneroot/js/abiSTOFactory')
+var {abiSTGFactory} = require('../public/vendors/oneroot/js/abiSTGFactory')
+var {abiRAC} = require('../public/vendors/oneroot/js/abiRAC')
 
 // 创建web3对象
 var web3 = new Web3();
@@ -128,17 +128,17 @@ module.exports= class ApiService {
     static getAbi(name) {
         let abi='';
         if(name=='ST') {
-            abi = SecurityToken.abi;
+            abi = abiSecurityToken;
         } else if(name=='GP') {
-            abi =  GeneralPolicy.abi;
+            abi =  abiGP;
         } else if(name=='STO') {
-            abi =  DefaultSTO.abi;
+            abi =  abiSTO;
         } else if(name=='STOFactory') {
-            abi =  DefaultSTOFactory.abi;
+            abi =  abiSTOFactory;
         } else if(name=='STGFactory') {
-            abi =  STGFactory.abi;
+            abi =  abiSTGFactory;
         } else if(name=='RAC') {
-            abi =  RAC.abi;
+            abi =  abiRAC;
         }
         return abi;
     }

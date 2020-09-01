@@ -39,21 +39,27 @@
 
     var uid = 1;
 
-    eventWatch(web3, uid, abis);
+    eventWatch(web3, uid, abis).then();
   }
 
   function callback(_data) {
     console.log('callback:', _data);
-    appendResult(_data);
+    insertResult(_data);
     // run business code
   }
 
-  function eventWatch(web3, uid, abis) {
+  async function eventWatch(web3, uid, abis) {
     var _eshelper = new EventHelper(web3, uid, abis);
-    _eshelper.fromBlock = 0;
+    _eshelper.fromBlock = 0; // recommend no set, this is just testing
+    // _eshelper.toBlock=_eshelper.fromBlock+1000; // recommend no set, this is just testing
     _eshelper.configContract = config.contract;
     _eshelper.watchCallback = callback;
-    _eshelper.watch();
+
+    // NOTE watch a contract
+    _eshelper.watch(config.contract.RAC, 'RAC');
+
+    // NOTE watch all contract in the storage
+    // _eshelper.watch();
   }
 
   // var Web3 = require('web3');

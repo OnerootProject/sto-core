@@ -21,8 +21,8 @@ var SecurityToken = function (web3, param) {
         return factory.callTx('decimals', factory.instance.decimals.getData());
     };
 
-    factory.issuer = function () {
-        return factory.callTx('issuer', factory.instance.issuer.getData());
+    factory.owner = function () {
+        return factory.callTx('owner', factory.instance.owner.getData());
     };
 
     factory.getTrancheTotalSupply = function (tranche) {
@@ -37,9 +37,12 @@ var SecurityToken = function (web3, param) {
         return factory.callTx('balanceOfTranche', factory.instance.balanceOfTranche.getData(tranche, owner));
     };
 
-
     factory.getPolicy = function (tranche='') {
         return factory.callTx('getPolicy', factory.instance.getPolicy.getData(tranche));
+    };
+
+    factory.checkRole = function (owner, action) {
+        return factory.callTx('checkRole', factory.instance.checkRole.getData(owner, action));
     };
 
     factory.changePolicyRegistry = function (policyRegistry) {
@@ -90,18 +93,27 @@ var SecurityToken = function (web3, param) {
         return factory.sendTx(txData);
     };
 
-    factory.authorizeOperator = function (operator) {
-        factory.gasLimit = 37408*2;
-        let txData = {
-            data: factory.instance.authorizeOperator.getData(operator)
-        };
-        return factory.sendTx(txData);
-    };
 
     factory.approve = function (operator, value=1) {
         factory.gasLimit = 55183*2;
         let txData = {
             data: factory.instance.approve.getData(operator, value)
+        };
+        return factory.sendTx(txData);
+    };
+
+    factory.addRole = function (owner, action) {
+        factory.gasLimit = 58611*2;
+        let txData = {
+            data: factory.instance.addRole.getData(owner, action)
+        };
+        return factory.sendTx(txData);
+    };
+
+    factory.removeRole = function (owner, action) {
+        factory.gasLimit = 58611*2;
+        let txData = {
+            data: factory.instance.removeRole.getData(owner, action)
         };
         return factory.sendTx(txData);
     };

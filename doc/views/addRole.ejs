@@ -40,9 +40,6 @@
 
   function runCode() {
     var operator=$('#operator').val();
-    if(!operator) {
-      operator='0x866e43291293892bd0980adc4ec5166f33623d86';
-    }
     var action = $('#role').val();
     console.log(operator, action);
     if(!action) {
@@ -53,14 +50,8 @@
   }
 
   async function addRole(operator, action) {
-    var res = getWeb3Account();
-    var account = res.data;
+    var account = web3.eth.coinbase;
     var result = "账号：" + account +"\n";
-    if(res.code!=0) {
-      result += res.msg+ '\n';
-      setResult(result);
-      return;
-    }
 
     try {
       var nonce = await getWeb3Nonce(account);
@@ -82,7 +73,6 @@
   $(document).ready(function() {
     _initRole();
     var code = runCode.toString() + "\n\n";
-    code += getWeb3Account.toString()+"\n";
     code += addRole.toString() + "\n";
     code += "runCode();\n\n";
     setCode(code);
@@ -91,8 +81,8 @@
 
   function _initRole() {
     $('#operator').val(web3.eth.coinbase);
-    for(var i=0;i<roles.length;i++) {
-      $('#role').append("<option value='"+roles[i]+"'>"+roles[i]+"</option>");
+    for(var i=0;i<RAC_ROLES.length;i++) {
+      $('#role').append("<option value='"+RAC_ROLES[i]+"'>"+RAC_ROLES[i]+"</option>");
     }
 
   }

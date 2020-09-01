@@ -22,7 +22,7 @@ contract("SecurityToken", accounts => {
     let iPolicyRegistry;
     let iSecurityToken;
     let iGeneralPolicy;
-    let iDefaultSTO;
+    let iGeneralSTO;
     let iRAC;
 
     let rate = 10;
@@ -48,8 +48,9 @@ contract("SecurityToken", accounts => {
         tx = await iSecurityToken.registryPolicy('', iGeneralPolicy.address, {from: owner});
         assert.equal(tx.receipt.status, 1, "Failed to registryPolicy");
 
-        iDefaultSTO = await DeployContract.deployDefaultSTO(owner, iSecurityToken.address);
-        await iRAC.addRole(iDefaultSTO.address, 'mint', {from: owner});
+        iGeneralSTO = await DeployContract.deployGeneralSTO(owner, iSecurityToken.address);
+
+        iSecurityToken.addRole(iGeneralSTO.address, 'mint');
     });
 
     describe("Test STO For ETH", async () => {
@@ -66,16 +67,17 @@ contract("SecurityToken", accounts => {
             let _lockMonths = 12;
 
             Log.trace('params:','', false, [address_zero,fundsReceiver],[_startTime, _endTime, _maxAmount, _rate, _minInvestorAmount, _maxInvestorAmount, _maxInvestors, _lockMonths]);
-            let tx = await iDefaultSTO.configure('', false, [address_zero,fundsReceiver],[_startTime, _endTime, _maxAmount, _rate, _minInvestorAmount, _maxInvestorAmount, _maxInvestors, _lockMonths], {from: owner});
+            let tx = await iGeneralSTO.configure('', false, [address_zero,fundsReceiver],[_startTime, _endTime, _maxAmount, _rate, _minInvestorAmount, _maxInvestorAmount, _maxInvestors, _lockMonths], {from: owner});
             Log.debug('tx', tx.receipt);
             assert.equal(tx.receipt.status, 1, "Failed to configure");
 
         });
 
         it("Should successfully to call buy", async () => {
-            let fromTime = Web3Utils.latestTime(web3);
+            let now = Web3Utils.latestTime(web3);
+            let fromTime = now + Utils.duration.days(-1);
             let toTime = fromTime;
-            let expiryTime = fromTime + Utils.duration.days(100);
+            let expiryTime = now + Utils.duration.days(100);
 
             let tx = await iGeneralPolicy.modifyWhitelist(investor1, fromTime, toTime, expiryTime, true, '', {
                 from: owner,
@@ -101,7 +103,7 @@ contract("SecurityToken", accounts => {
             beforeFundsReceiverBalance = Web3Utils.getAmount(beforeFundsReceiverBalance,18).toNumber();
             Log.debug('beforeFundsReceiverBalance:', beforeFundsReceiverBalance);
 
-            tx = await iDefaultSTO.buy({
+            tx = await iGeneralSTO.buy({
                 value: Web3Utils.setAmount(amount,18).toNumber(),
                 from: investor1
             });
@@ -136,16 +138,17 @@ contract("SecurityToken", accounts => {
             let _lockMonths = 12;
 
             Log.trace('params:','', false, [iSecurityToken.address,fundsReceiver],[_startTime, _endTime, _maxAmount, _rate, _minInvestorAmount, _maxInvestorAmount, _maxInvestors, _lockMonths]);
-            let tx = await iDefaultSTO.configure('', false, [iSecurityToken.address,fundsReceiver],[_startTime, _endTime, _maxAmount, _rate, _minInvestorAmount, _maxInvestorAmount, _maxInvestors, _lockMonths], {from: owner});
+            let tx = await iGeneralSTO.configure('', false, [iSecurityToken.address,fundsReceiver],[_startTime, _endTime, _maxAmount, _rate, _minInvestorAmount, _maxInvestorAmount, _maxInvestors, _lockMonths], {from: owner});
             Log.debug('tx', tx.receipt);
             assert.equal(tx.receipt.status, 1, "Failed to configure");
 
         });
 
         it("Should successfully to call buy", async () => {
-            let fromTime = Web3Utils.latestTime(web3);
+            let now = Web3Utils.latestTime(web3);
+            let fromTime = now + Utils.duration.days(-1);
             let toTime = fromTime;
-            let expiryTime = fromTime + Utils.duration.days(100);
+            let expiryTime = now + Utils.duration.days(100);
 
             let tx = await iGeneralPolicy.modifyWhitelist(investor1, fromTime, toTime, expiryTime, true, '', {
                 from: owner,
@@ -168,7 +171,7 @@ contract("SecurityToken", accounts => {
             Log.debug('tx', tx.logs[0]);
             assert.equal(tx.receipt.status, 1, "Failed to buy");
 
-            tx = await iSecurityToken.approve(iDefaultSTO.address, Web3Utils.setAmount(1000000,18).toNumber(), { from: investor1 });
+            tx = await iSecurityToken.approve(iGeneralSTO.address, Web3Utils.setAmount(1000000,18).toNumber(), { from: investor1 });
             Log.debug('tx:', tx.receipt);
             assert.equal(tx.logs[0].args._value, Web3Utils.setAmount(1000000,18).toNumber(), "Failed to approve");
 
@@ -182,7 +185,7 @@ contract("SecurityToken", accounts => {
             beforeFundsReceiverBalance = Web3Utils.getAmount(beforeFundsReceiverBalance,18).toNumber();
             Log.debug('beforeFundsReceiverBalance:', beforeFundsReceiverBalance);
 
-            tx = await iDefaultSTO.buyWithToken(Web3Utils.setAmount(amount,18).toNumber(), {
+            tx = await iGeneralSTO.buyWithToken(Web3Utils.setAmount(amount,18).toNumber(), {
                 from: investor1
             });
             Log.debug('tx', tx.logs[0]);

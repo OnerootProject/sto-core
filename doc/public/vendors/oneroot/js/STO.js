@@ -5,10 +5,6 @@ var STO = function (web3, param) {
         return factory.callTx('securityToken', factory.instance.securityToken.getData());
     };
 
-    factory.racRegistry = function () {
-        return factory.callTx('racRegistry', factory.instance.racRegistry.getData());
-    };
-
     factory.getSTODetails = function () {
         return factory.callTx('getSTODetails', factory.instance.getSTODetails.getData());
     };

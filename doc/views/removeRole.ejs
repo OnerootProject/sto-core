@@ -91,8 +91,8 @@
 
   function _initRole() {
     $('#operator').val(web3.eth.coinbase);
-    for(var i=0;i<roles.length;i++) {
-      $('#role').append("<option value='"+roles[i]+"'>"+roles[i]+"</option>");
+    for(var i=0;i<RAC_ROLES.length;i++) {
+      $('#role').append("<option value='"+RAC_ROLES[i]+"'>"+RAC_ROLES[i]+"</option>");
     }
 
   }

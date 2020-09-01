@@ -9,6 +9,7 @@ var EventHelper = function (web3, uid='', abis={}, configContract=null) {
         topics: null,
         configContract: configContract,
         fromBlock: 'latest',
+        toBlock: 'latest',
         processCallback: null,
         watchCallback: null
     };
@@ -70,7 +71,15 @@ var EventHelper = function (web3, uid='', abis={}, configContract=null) {
         setTimeout(factory.process, factory.etime);
     };
 
-    factory.watch = function() {
+    factory.watch = function(address='', name='') {
+        //watch specify
+        if(address && name) {
+            factory._ContractHelper.set(address, name);
+            factory.watchContract(address, name);
+            return;
+        }
+
+        //watch storage
         var _contractList = factory._ContractHelper.list();
         console.log('_contractList:', _contractList);
         if(!_contractList || typeof _contractList != 'object') {
@@ -78,20 +87,29 @@ var EventHelper = function (web3, uid='', abis={}, configContract=null) {
         }
 
         for (var addr in _contractList) {
-            var _options = {
-                fromBlock: factory.fromBlock,
-                toBlock:'latest',
-                address: addr
-            };
-
-            var _abi = factory.getAbi(_contractList[addr]);
-            factory.watchContract(_abi, _options);
+            console.log(addr, _contractList[addr]);
+            factory.watchContract(addr, _contractList[addr]);
         }
-
     };
 
-    factory.watchContract = function(_abi, options) {
-        var filter = web3.eth.filter(options);
+
+    factory.watchContract = function(address, name) {
+        var _abi = factory.getAbi(name);
+        if(!_abi)  {
+            console.error('invalid contract type:', address, name);
+            return;
+        }
+
+        console.log('watch Contract:', address, name);
+
+        var _options = {
+            fromBlock: factory.fromBlock,
+            toBlock: factory.toBlock,
+            address: address
+        };
+
+
+        var filter = web3.eth.filter(_options);
         filter.watch(function (error, log) {
             if(error) {
                 console.error('error:', error);
@@ -117,6 +135,9 @@ var EventHelper = function (web3, uid='', abis={}, configContract=null) {
 
     factory.getAbi = function(name) {
         // console.log('name:', name);
+        if(!name) {
+            return;
+        }
         var abi='';
         if(name=='ST') {
             abi = factory.abis['abiSecurityToken'];

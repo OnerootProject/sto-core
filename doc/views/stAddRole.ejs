@@ -5,31 +5,31 @@
   <main class="main">
     <!-- Breadcrumb-->
     <ol class="breadcrumb">
-      <li class="breadcrumb-item">RAC合约</li>
-      <li class="breadcrumb-item active">批量删除权限</li>
+      <li class="breadcrumb-item">ST合约</li>
+      <li class="breadcrumb-item active">ST添加权限</li>
     </ol>
 
     <div class="container-fluid">
       <div class="animated fadeIn">
         <div class="card">
-          <div class="card-header">batchRemoveRole(operator, action)</div>
+          <div class="card-header">stAddRole(operator, action)</div>
           <div class="card-body">
             <div class="bd-example">
-              批量删除权限
+              ST合约,给用户添加权限
             </div>
             <div class="row">
               <div class="col-sm-6">
                 <input class="form-control" id="operator" type="text" name="operator" placeholder="请输入有效地址,如钱包/合约地址">
               </div>
               <div class="col-sm-6">
-                <select class="form-control" id="role" name="role" multiple="multiple" size="5">
+                <select class="form-control" id="role" name="role">
                   <option value="">选择权限</option>
                 </select>
               </div>
             </div>
           </div>
         </div>
-      </div>
+        </div>
     </div>
 
     <%- include code %>
@@ -49,10 +49,10 @@
       alert('请先选择权限');
       return;
     }
-    batchRemoveRole(operator, action).then();
+    stAddRole(operator, action).then();
   }
 
-  async function batchRemoveRole(operator, action) {
+  async function stAddRole(operator, action) {
     var res = getWeb3Account();
     var account = res.data;
     var result = "账号：" + account +"\n";
@@ -65,10 +65,10 @@
     try {
       var nonce = await getWeb3Nonce(account);
       result += "nonce：" + nonce + "\n";
-      var param = {address: config.contract.RAC, abi: abiRAC, sender: account, nonce: nonce};
-      var rac = new RAC(web3, param);
+      var param = {address: config.contract.ST, abi: abiSecurityToken, sender: account, nonce: nonce};
+      var contract = new SecurityToken(web3, param);
 
-      res  = await rac.batchRemoveRole(operator, action);
+      res  = await contract.addRole(operator, action);
       result += "tx：" + res + "\n";
     } catch (e) {
       result += "error：" + e + "\n";
@@ -82,17 +82,17 @@
   $(document).ready(function() {
     _initRole();
     var code = runCode.toString() + "\n\n";
-    code += batchRemoveRole.toString() + "\n\n";
+    code += getWeb3Account.toString()+"\n";
+    code += stAddRole.toString() + "\n";
     code += "runCode();\n\n";
     setCode(code);
 
   });
 
-
   function _initRole() {
     $('#operator').val(web3.eth.coinbase);
-    for(var i=0;i<RAC_ROLES.length;i++) {
-      $('#role').append("<option value='"+RAC_ROLES[i]+"'>"+RAC_ROLES[i]+"</option>");
+    for(var i=0;i<ST_ROLES.length;i++) {
+      $('#role').append("<option value='"+ST_ROLES[i]+"'>"+ST_ROLES[i]+"</option>");
     }
 
   }

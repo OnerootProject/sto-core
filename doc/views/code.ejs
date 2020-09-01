@@ -68,7 +68,21 @@
     textarea.scrollTop(textarea[0].scrollHeight - textarea.height());
   }
 
+  function insertResult(_result) {
+    if(typeof _result == 'object') {
+      try {
+        _result = JSON.stringify(_result);
+      }catch(e) {
+        console.log('err:',e);
+      }
+    }
+
+    $('#result').prepend(_result+"\n\n");
+  }
+
   function evalCode() {
+    setResult('loading...');
+
     var code = $('#code').val();
     console.log(code);
     eval(code);

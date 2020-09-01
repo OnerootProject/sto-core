@@ -36,7 +36,6 @@ var GP = function (web3, param) {
         return factory.sendTx(txData);
     };
 
-
     return factory;
 
 };

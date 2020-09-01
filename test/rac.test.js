@@ -41,7 +41,7 @@ contract("RAC", accounts => {
         });
 
         it("check role", async () => {
-            tx = await iRAC.check(owner, 'createST');
+            tx = await iRAC.checkRole(owner, 'createST');
             console.debug('tx:', tx);
             assert.equal(tx, true, "Failed to check");
 
@@ -49,7 +49,7 @@ contract("RAC", accounts => {
 
         it("batch add roles", async () => {
             // console.log(owner, roles.roles);
-            tx = await iRAC.batchAddRole(owner, roles.roles, {from: owner});
+            tx = await iRAC.batchAddRole(owner, roles.RAC_ROLES, {from: owner});
             console.debug('tx:', tx);
             Log.debug('tx logs args:', tx.logs[0].args);
             assert.equal(tx.receipt.status, 1, "Failed to batchAddRole");
@@ -66,7 +66,7 @@ contract("RAC", accounts => {
         });
 
         it("check role", async () => {
-            tx = await iRAC.check(owner, 'createST');
+            tx = await iRAC.checkRole(owner, 'createST');
             console.debug('tx:', tx);
             assert.equal(tx, false, "Failed to check");
 

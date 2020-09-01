@@ -96,6 +96,16 @@ var StorageHelper = function (_prefix='') {
         return _res;
     };
 
+    factory.count = function() {
+        var _res = 0;
+        for(var _i=0; _i<localStorage.length; _i++) {
+            if(factory._PREFIX == localStorage.key(_i).substring(0,factory._PREFIX.length)) {
+                _res++;
+            }
+        }
+        return _res;
+    };
+
 
     factory.jsonMerge = function (json1, json2) {
         if(!json1 ) {

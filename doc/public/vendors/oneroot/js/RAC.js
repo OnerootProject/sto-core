@@ -1,8 +1,8 @@
 var RAC = function (web3, param) {
     var factory = new Web3Helper(web3, param);
 
-    factory.check = function (owner, action) {
-        return factory.callTx('check', factory.instance.check.getData(owner, action));
+    factory.checkRole = function (owner, action) {
+        return factory.callTx('checkRole', factory.instance.checkRole.getData(owner, action));
     };
 
     factory.addRole = function (owner, action) {

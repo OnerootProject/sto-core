@@ -1,5 +1,6 @@
 var STOFactory = function (web3, param) {
     var factory = new Web3Helper(web3, param);
+    factory.gasLimit = 2455988;
 
     factory.create = function (securityToken, tranche, paused, addresses, values) {
         let txData = {

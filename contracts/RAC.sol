@@ -28,7 +28,7 @@ contract RAC is DataType {
     */
     modifier onlyRole(string _action)
     {
-        require(check(msg.sender, stringToBytes32(_action)), "Permission deny");
+        require(checkRole(msg.sender, stringToBytes32(_action)), "Permission deny");
         _;
     }
 
@@ -37,7 +37,7 @@ contract RAC is DataType {
     * @param _operator address of operator
     * @param _action the name of the role
     */
-    function check(address _operator, bytes32 _action) public view returns (bool) {
+    function checkRole(address _operator, bytes32 _action) public view returns (bool) {
         return roles[_action][_operator];
     }
 
@@ -90,7 +90,7 @@ contract RAC is DataType {
     * check permission
     * @param _action the name of the role
     */
-    function checkPrivate(bytes32 _action) public view returns (bool) {
+    function checkPrivateRole(bytes32 _action) public view returns (bool) {
         return privateRoles[_action][msg.sender];
     }
 

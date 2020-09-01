@@ -27,19 +27,19 @@ contract PolicyRegistry {
     }
 
 
-    function checkTransfer(bytes32 _tranche, address _from, address _to, uint256 _amount, bytes _data) public returns(bool) {
+    function checkTransfer(bytes32 _tranche, address _from, address _to, uint256 _amount, bytes _data) public view returns(bool) {
         return IPolicy(policies[msg.sender][_tranche]).checkTransfer(_tranche, _from, _to, _amount, _data);
     }
 
-    function checkMint(bytes32 _tranche, address _to, uint256 _amount, bytes _data) public returns(bool) {
+    function checkMint(bytes32 _tranche, address _to, uint256 _amount, bytes _data) public view returns(bool) {
         return IPolicy(policies[msg.sender][_tranche]).checkMint(_tranche, _to, _amount, _data);
     }
 
-    function checkBurn(bytes32 _tranche, address _to, uint256 _amount, bytes _data) public returns(bool) {
+    function checkBurn(bytes32 _tranche, address _to, uint256 _amount, bytes _data) public view returns(bool) {
         return IPolicy(policies[msg.sender][_tranche]).checkBurn(_tranche, _to, _amount, _data);
     }
 
-    function checkChangeTranche(address _owner, bytes32 _from, bytes32 _to, uint256 _amount, bytes _data) public returns(bool) {
+    function checkChangeTranche(address _owner, bytes32 _from, bytes32 _to, uint256 _amount, bytes _data) public view returns(bool) {
         return IPolicy(policies[msg.sender][_to]).checkChangeTranche(_owner, _from, _to, _amount, _data);
     }
 

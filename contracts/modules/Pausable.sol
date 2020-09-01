@@ -1,9 +1,11 @@
 pragma solidity ^0.4.24;
 
+import "./Ownable.sol";
+
 /**
  * @title Utility contract to allow pausing and unpausing of certain functions
  */
-contract Pausable {
+contract Pausable is Ownable {
 
     event Pause(uint256 _timestammp);
     event Unpause(uint256 _timestamp);
@@ -29,7 +31,7 @@ contract Pausable {
     /**
      * @notice Called by the owner to pause, triggers stopped state
      */
-    function pause() public whenNotPaused {
+    function pause() public onlyOwner whenNotPaused {
         paused = true;
         emit Pause(now);
     }
@@ -37,7 +39,7 @@ contract Pausable {
     /**
     * @notice Called by the owner to unpause, returns to normal state
     */
-    function unpause() public whenPaused {
+    function unpause() public onlyOwner whenPaused {
         paused = false;
         emit Unpause(now);
     }

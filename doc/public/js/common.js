@@ -205,6 +205,23 @@ async function getBlock(block) {
     });
 }
 
+async function getBlockNumber() {
+    return new Promise((resolve, reject) => {
+        if(!web3) {
+            reject(false);
+        } else {
+            web3.eth.getBlockNumber((error, result) => {
+                if (error) {
+                    reject(error);
+                } else {
+                    resolve(result);
+                }
+            });
+        }
+
+    });
+}
+
 function decodeEventsForContract(abi, logs) {
     if(!abi || !logs) {
         console.error('decodeEventsForContract invalid param');
@@ -282,29 +299,4 @@ function jsonMerge(json1, json2) {
         res[k] =json2[k];
     }
     return res;
-}
-
-function formatWeb3Address(address) {
-    if(!address) {
-        return address;
-    }
-
-    if(address.toLowerCase().substring(0,2) == '0x') {
-        address = address.substring(2);
-    }
-
-    if(address.length == 64) {
-        var _taddr = '';
-        for(var i=0; i< address.length; i++) {
-            if(address[i] == '0') {
-                continue;
-            } else if(address[i] != '0') {
-                _taddr = address.substring(i);
-                break;
-            }
-        }
-        address = _taddr;
-    }
-
-    return '0x'+address.toLocaleString();
 }

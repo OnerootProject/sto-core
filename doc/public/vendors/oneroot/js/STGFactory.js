@@ -1,5 +1,6 @@
 var STGFactory = function (web3, param) {
     var factory = new Web3Helper(web3, param);
+    factory.gasLimit = 4890858;
 
     factory.create = function (issuer, name, symbol, decimals, granularity) {
         let txData = {

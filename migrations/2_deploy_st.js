@@ -6,103 +6,172 @@ const GeneralPolicy = artifacts.require('./policies/GeneralPolicy.sol')
 const PolicyRegistry = artifacts.require('./PolicyRegistry.sol')
 const RAC = artifacts.require('./RAC.sol')
 const SecurityToken = artifacts.require('./SecurityToken.sol')
-const DefaultSTO = artifacts.require('./stos/DefaultSTO.sol')
+const GeneralSTO = artifacts.require('./stos/GeneralSTO.sol')
+const GeneralSTOFactory = artifacts.require('./stos/GeneralSTOFactory.sol')
 const STGFactory = artifacts.require('./STGFactory.sol')
-const DefaultSTOFactory = artifacts.require('./DefaultSTOFactory.sol')
 
-
+var owner;
+var iPolicyRegistry;
+var iRAC;
+var iGeneralPolicy;
+var iSecurityToken;
+var iGeneralSTO;
+var iSTGFactory;
+var iGeneralSTOFactory;
+var address_zero = "0x0000000000000000000000000000000000000000";
 
 module.exports = async function (deployer, network, accounts) {
     console.log('network:',network);
-    if(network != 'main') {
-        deployDev(deployer, network, accounts);
+    owner = accounts[0];
+    if(network == 'main') {
+        deployProd(deployer);
+    } else {
+        deployDev(deployer);
     }
 
 }
 
-function deployDevToken(deployer, network, accounts) {
-    console.log('network:',network);
-    return deployer.deploy(Token, {from: accounts[0]}).then(function() {
-        console.log('Token address:',Token.address);
-    });
-}
-
-function deployDev(deployer, network, accounts) {
-    console.log('deployDev...');
-    // deployDevToken(deployer, network, accounts);
-
-    let owner = accounts[0];
-    let policyRegistry;
-    let rac;
-    let generalPolicy;
-    let securityToken;
-    let defaultSTO;
-    let sTGFactory;
-    let defaultSTOFactory;
-    let address_zero = "0x0000000000000000000000000000000000000000";
-
-    return deployer.deploy(PolicyRegistry, {from: owner}).then(() => {
-        return PolicyRegistry.deployed();
-    }).then((_policyRegistry) => {
-        policyRegistry = _policyRegistry;
-        return deployer.deploy(RAC, {from: owner});
-    }).then((_rac) => {
-        rac = _rac;
-        return deployer.deploy(SecurityToken,owner,'R1 Security Token', 'R1ST', 18, 1, rac.address, {from: owner});
-    }).then((_securityToken) => {
-        securityToken = _securityToken;
-        return deployer.deploy(STGFactory, policyRegistry.address, rac.address, {from: owner});
-    }).then((_sTGFactory) => {
-        sTGFactory = _sTGFactory;
-        let addresses = [address_zero, owner];
-        let _startTime = Math.floor(new Date().getTime()/1000);
-        let _endTime = _startTime + 3600*24*30000;
-        let _maxAmount = Web3Utils.setAmount(100000000, 18).toNumber();
-        let _rate = 10;
-        let _minInvestorAmount = Web3Utils.setAmount(1, 18).toNumber();
-        let _maxInvestorAmount = Web3Utils.setAmount(10000, 18).toNumber();
-        let _maxInvestors = 200;
-        let _lockMonths = 12;
-        let values = [_startTime, _endTime, _maxAmount, _rate, _minInvestorAmount, _maxInvestorAmount, _maxInvestors, _lockMonths];
-        return deployer.deploy(DefaultSTO, securityToken.address, '', false, addresses, values, {from: owner});
-    }).then((_defaultSTO) => {
-        defaultSTO = _defaultSTO;
-        return deployer.deploy(DefaultSTOFactory, rac.address, {from: owner});
-    }).then((_defaultSTOFactory) => {
-        defaultSTOFactory = _defaultSTOFactory;
-        return deployer.deploy(GeneralPolicy, securityToken.address, {from: owner});
-    }).then((_generalPolicy) => {
-        generalPolicy = _generalPolicy;
+function deployProd(deployer) {
+    return _deployPolicyRegistry(deployer).then(() => {
+        return _deployRAC(deployer);
+    }).then(() => {
+        return _deploySTOFactory(deployer);
+    }).then(() => {
+        return _deploySTGFactory(deployer);
+    }).then(() => {
 
         console.log('\n');
         console.log(`
     ----------------------- Contracts' address: ------------------------------------
-    PolicyRegistry:                          ${policyRegistry.address}
-    RAC:                                     ${rac.address}
-    STGFactory:                              ${sTGFactory.address}
-    DefaultSTOFactory:                       ${defaultSTOFactory.address}
-    SecurityToken:                           ${securityToken.address}
-    GeneralPolicy:                           ${generalPolicy.address}
-    defaultSTO:                              ${defaultSTO.address}
+    PolicyRegistry:                          ${iPolicyRegistry.address}
+    RAC:                                     ${iRAC.address}
+    STGFactory:                              ${iSTGFactory.address}
+    GeneralSTOFactory:                       ${iGeneralSTOFactory.address}
+    ---------------------------------------------------------------------------------
+    `);
+        console.log('\n');
+
+    });
+}
+
+function deployDev(deployer) {
+    return _deployPolicyRegistry(deployer).then(() => {
+        return _deployRAC(deployer);
+    }).then(() => {
+        return _deploySTOFactory(deployer);
+    }).then(() => {
+        return _deploySTGFactory(deployer);
+    }).then(() => {
+        return _deploySecurityToken(deployer);
+    }).then(() => {
+        return _deployGeneralPolicy(deployer);
+    }).then(() => {
+        return _deployGeneralSTO(deployer);
+    }).then(() => {
+
+        console.log('\n');
+        console.log(`
+    ----------------------- Contracts' address: ------------------------------------
+    PolicyRegistry:                          ${iPolicyRegistry.address}
+    RAC:                                     ${iRAC.address}
+    STGFactory:                              ${iSTGFactory.address}
+    GeneralSTOFactory:                       ${iGeneralSTOFactory.address}
+    SecurityToken:                           ${iSecurityToken.address}
+    GeneralPolicy:                           ${iGeneralPolicy.address}
+    GeneralSTO:                              ${iGeneralSTO.address}
     ---------------------------------------------------------------------------------
     `);
         console.log('\n');
 
         let configContent =`config = {
     contract: {
-        PolicyRegistry: '${policyRegistry.address}',
-        RAC: '${rac.address}',
-        STGFactory: '${sTGFactory.address}',
-        STOFactory: '${defaultSTOFactory.address}',
-        ST: '${securityToken.address}',
-        GP: '${generalPolicy.address}',
-        STO: '${defaultSTO.address}'
+        PolicyRegistry: '${iPolicyRegistry.address}',
+        RAC: '${iRAC.address}',
+        STGFactory: '${iSTGFactory.address}',
+        STOFactory: '${iGeneralSTOFactory.address}',
+        ST: '${iSecurityToken.address}',
+        GP: '${iGeneralPolicy.address}',
+        STO: '${iGeneralSTO.address}'
     }
 };
     `;
 
         generateCode(configContent);
 
+    });
+}
+
+function _deployPolicyRegistry(deployer) {
+    return deployer.deploy(PolicyRegistry, {from: owner}).then(() => {
+        return PolicyRegistry.deployed();
+    }).then((res) => {
+        iPolicyRegistry = res;
+        return deployer;
+    });
+}
+
+function _deployRAC(deployer) {
+    return deployer.deploy(RAC, {from: owner}).then(() => {
+        return RAC.deployed();
+    }).then((res) => {
+        iRAC = res;
+        return deployer;
+    });
+}
+
+function _deploySTOFactory(deployer) {
+    return deployer.deploy(GeneralSTOFactory, {from: owner}).then(() => {
+        return GeneralSTOFactory.deployed();
+    }).then((res) => {
+        iGeneralSTOFactory = res;
+        return deployer;
+    });
+}
+
+function _deploySTGFactory(deployer) {
+    return deployer.deploy(STGFactory, iPolicyRegistry.address, iRAC.address, iGeneralSTOFactory.address, {from: owner}).then(() => {
+        return STGFactory.deployed();
+    }).then((res) => {
+        iSTGFactory = res;
+        return deployer;
+    });
+}
+
+function _deploySecurityToken(deployer) {
+    return deployer.deploy(SecurityToken, owner,'R1 Security Token', 'R1ST', 18, 1, {from: owner}).then(() => {
+        return SecurityToken.deployed();
+    }).then((res) => {
+        iSecurityToken = res;
+        return deployer;
+    });
+}
+
+function _deployGeneralPolicy(deployer) {
+    return deployer.deploy(GeneralPolicy, iSecurityToken.address, {from: owner}).then((res) => {
+        return GeneralPolicy.deployed();
+    }).then((res) => {
+        iGeneralPolicy = res;
+        return deployer;
+    });
+}
+
+function _deployGeneralSTO(deployer) {
+    let addresses = [address_zero, owner];
+    let _startTime = Math.floor(new Date().getTime()/1000);
+    let _endTime = _startTime + 3600*24*30000;
+    let _maxAmount = Web3Utils.setAmount(100000000, 18).toNumber();
+    let _rate = 10;
+    let _minInvestorAmount = Web3Utils.setAmount(1, 18).toNumber();
+    let _maxInvestorAmount = Web3Utils.setAmount(10000, 18).toNumber();
+    let _maxInvestors = 200;
+    let _lockMonths = 12;
+    let values = [_startTime, _endTime, _maxAmount, _rate, _minInvestorAmount, _maxInvestorAmount, _maxInvestors, _lockMonths];
+
+    return deployer.deploy(GeneralSTO, iSecurityToken.address, '', false, addresses, values, {from: owner}).then((res) => {
+        return GeneralSTO.deployed();
+    }).then((res) => {
+        iGeneralSTO = res;
+        return deployer;
     });
 }
 
@@ -130,14 +199,14 @@ function generateCode(configContent) {
     abi += "}(typeof exports === 'undefined' ? this.share = {} : exports));\n";
     FileUtils.writeFile(__dirname+'/../doc/public/vendors/oneroot/js/abiSTGFactory.js', abi);
 
-    contractJson = require('../build/contracts/DefaultSTO');
+    contractJson = require('../build/contracts/GeneralSTO');
     abi = "var abiSTO =" + JsonUtils.stringify(contractJson.abi) + ";";
     abi += "(function(exports){\n";
     abi += "    exports.abiSTO = abiSTO;\n";
     abi += "}(typeof exports === 'undefined' ? this.share = {} : exports));\n";
     FileUtils.writeFile(__dirname+'/../doc/public/vendors/oneroot/js/abiSTO.js', abi);
 
-    contractJson = require('../build/contracts/DefaultSTOFactory');
+    contractJson = require('../build/contracts/GeneralSTOFactory');
     abi = "var abiSTOFactory =" + JsonUtils.stringify(contractJson.abi) + ";";
     abi += "(function(exports){\n";
     abi += "    exports.abiSTOFactory = abiSTOFactory;\n";

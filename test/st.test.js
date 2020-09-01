@@ -132,9 +132,10 @@ contract("SecurityToken", accounts => {
     //     });
     //
         it("Should transfer from policy investor", async () => {
-            let fromTime = Web3Utils.latestTime(web3);
+            let now = Web3Utils.latestTime(web3);
+            let fromTime = now + Utils.duration.days(-1);
             let toTime = fromTime;
-            let expiryTime = fromTime + Utils.duration.days(100);
+            let expiryTime = now + Utils.duration.days(100);
             let tx = await iGeneralPolicy.modifyWhitelist(investor1, fromTime, toTime, expiryTime, true,'',  {
                 from: owner,
                 gas: 6000000
@@ -147,13 +148,6 @@ contract("SecurityToken", accounts => {
             });
             assert.equal(tx.logs[0].args._investor, investor2, "Failed in adding the investor in whitelist");
 
-            tx = await iGeneralPolicy.configHolder('', 200, 80, {
-                from: owner,
-                gas: 6000000
-            });
-            Log.debug('configHolder tx:',tx.logs[0].args);
-            assert.equal(tx.logs[0].args._newHolderCount, 200, "Failed in adding the investor2 in configHolder");
-            assert.equal(tx.logs[0].args._newHolderPercentage, 80, "Failed in adding the investor2 in configHolder");
 
             let beforeBalance = await iSecurityToken.balanceOfTranche('',investor2);
             beforeBalance = Web3Utils.getAmount(beforeBalance,18).toNumber();
@@ -204,11 +198,11 @@ contract("SecurityToken", accounts => {
             let tx = await iSecurityToken.approve(operator, Web3Utils.setAmount(1000000,18).toNumber(), { from: investor2 });
             assert.equal(tx.logs[0].args._value, Web3Utils.setAmount(1000000,18).toNumber(), "Failed to approve");
 
-            let res = await iSecurityToken.isOperatorForTranche('',operator,investor2);
-            Log.debug('isOperatorForTranche:', res);
-            assert.equal(res, true, "Failed to check approve");
+            let res = await iSecurityToken.allowance(investor2, operator);
+            Log.debug('allowance:', res);
+            assert.equal(res, Web3Utils.setAmount(1000000,18).toNumber(), "Failed to check approve");
 
-            let beforeBalance = await iSecurityToken.balanceOfTranche('',investor2);
+            let beforeBalance = await iSecurityToken.balanceOf(investor2);
             beforeBalance = Web3Utils.getAmount(beforeBalance,18).toNumber();
             Log.debug('beforeBalance:', beforeBalance);
             tx = await iSecurityToken.transferFrom(investor2, investor1, Web3Utils.setAmount(1,18).toNumber(), {
@@ -216,7 +210,7 @@ contract("SecurityToken", accounts => {
             });
             Log.debug('transferFrom tx:',tx.logs[0].args);
             assert.equal(tx.logs[0].args._value, Web3Utils.setAmount(1,18).toNumber(), "Failed to transferFrom");
-            let afterBalance = await iSecurityToken.balanceOfTranche('',investor2);
+            let afterBalance = await iSecurityToken.balanceOf(investor2);
             afterBalance = Web3Utils.getAmount(afterBalance,18).toNumber();
             Log.debug('afterBalance:', afterBalance);
             assert.equal(beforeBalance-afterBalance, 1, 'Should be 1');
